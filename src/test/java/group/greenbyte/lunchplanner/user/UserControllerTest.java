@@ -62,7 +62,7 @@ public class UserControllerTest {
     @Test
     public void test2CreateUserEmptyUsername() throws Exception{
         String userName = "";
-        String mail = createString(50);
+        String mail = "test@yuyhinoal.dalk";
         String password = createString(80);
 
         UserJson userJson = new UserJson(userName, password, mail);
@@ -76,7 +76,7 @@ public class UserControllerTest {
     @Test
     public void test3CreateUserTooLongUserName() throws Exception{
         String userName = createString(51);
-        String mail = createString(50);
+        String mail = "test@yuyhinoal.dalk";
         String password = createString(80);
 
         UserJson userJson = new UserJson(userName, password, mail);
@@ -85,11 +85,13 @@ public class UserControllerTest {
 
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-          
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+  
     @Test
     public void test4CreateUserEmptyPassword() throws Exception{
         String userName = createString(50);
-        String mail = createString(50);
+        String mail = "test@yuyhinoal.dalk";
         String password = "";
 
         UserJson userJson = new UserJson(userName, password, mail);
@@ -104,7 +106,7 @@ public class UserControllerTest {
     @Test
     public void test5CreateUserTooLongPassword() throws Exception{
         String userName = createString(50);
-        String mail = createString(50);
+        String mail = "test@yuyhinoal.dalk";
         String password = createString(81);
 
         UserJson userJson = new UserJson(userName, password, mail);
@@ -134,7 +136,7 @@ public class UserControllerTest {
     @Test
     public void test7CreateUserTooLongEmail() throws Exception{
         String userName = createString(50);
-        String mail = createString(51);
+        String mail = createString(50) + "@yuyhinoal.dalk";
         String password = createString(80);
 
         UserJson userJson = new UserJson(userName, password, mail);
