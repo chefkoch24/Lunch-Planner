@@ -1,5 +1,6 @@
 package group.greenbyte.lunchplanner.user;
 
+import group.greenbyte.lunchplanner.AppConfig;
 import group.greenbyte.lunchplanner.event.EventController;
 import group.greenbyte.lunchplanner.event.EventJson;
 import org.json.JSONObject;
@@ -9,7 +10,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -21,6 +25,9 @@ import static group.greenbyte.lunchplanner.Utils.getJsonFromObject;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = AppConfig.class)
+@WebAppConfiguration
+@ActiveProfiles("application-test.properties")
 public class UserControllerTest {
 
     private MockMvc mockMvc;

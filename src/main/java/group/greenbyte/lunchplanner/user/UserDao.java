@@ -4,7 +4,6 @@ import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.stereotype.Repository;
 
-@Repository
 public interface UserDao {
 
     /**
