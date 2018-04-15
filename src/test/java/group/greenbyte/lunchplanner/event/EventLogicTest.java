@@ -187,4 +187,51 @@ public class EventLogicTest {
 
         List<Event> result = eventLogic.getAllEvents(userName, searchword);
     }
+
+    // ------------------------- UPDATE EVENT DESCRIPTION ------------------------------
+
+    @Test
+    public void test1updateEventUsernameLengthNoDescription() throws Exception {
+        String userName = createString(50);
+        int eventId = 1;
+        String description = createString(0);
+
+        eventLogic.updateEventDescription(userName, eventId, description);
+    }
+
+    @Test
+    public void test2updateEventUsernameLengthMaxLengthDescription() throws Exception {
+        String userName = createString(50);
+        int eventId = 1;
+        String description = createString(1000);
+
+        eventLogic.updateEventDescription(userName, eventId, description);
+    }
+
+    @Test (expected = HttpRequestException.class)
+    public void test3updateEventEmptyUsernameMaxLengthDescription() throws Exception {
+        String userName = createString(51);
+        int eventId = 1;
+        String description = createString(1000);
+
+        eventLogic.updateEventDescription(userName, eventId, description);
+    }
+
+    @Test (expected = HttpRequestException.class)
+    public void test4updateEventInvalidUsernameMaxLengthDescription() throws Exception {
+        String userName = createString(51);
+        int eventId = 1;
+        String description = createString(1000);
+
+        eventLogic.updateEventDescription(userName, eventId, description);
+    }
+
+    @Test (expected = HttpRequestException.class)
+    public void test5updateEventUsernameInvalidDescription() throws Exception {
+        String userName = createString(50);
+        int eventId = 1;
+        String description = createString(1001);
+
+        eventLogic.updateEventDescription(userName, eventId, description);
+    }
 }
