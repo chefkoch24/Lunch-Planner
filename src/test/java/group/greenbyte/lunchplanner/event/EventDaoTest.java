@@ -92,4 +92,33 @@ public class EventDaoTest {
         Event result = eventDao.insertEvent(userName, eventName, description, locationId,
                 new Date(timeStart), new Date (timeEnd));
     }
+
+    // ------------------------- UPDATE EVENT DESCRIPTION ------------------------------
+
+    @Test
+    public void test1updateValidUsernameDescription() throws Exception {
+        String userName = createString(50);
+        int eventId = 1;
+        String description = createString(1000);
+
+        eventDao.updateEventDescription(userName,eventId, description);
+    }
+
+    @Test (expected = DatabaseException.class)
+    public void test2updateInvalidUsernameDescription() throws Exception {
+        String userName = createString(51);
+        int eventId = 1;
+        String description = createString(1000);
+
+        eventDao.updateEventDescription(userName,eventId, description);
+    }
+
+    @Test (expected = DatabaseException.class)
+    public void test3updateUsernameInvalidDescription() throws Exception {
+        String userName = createString(50);
+        int eventId = 1;
+        String description = createString(1001);
+
+        eventDao.updateEventDescription(userName,eventId, description);
+    }
 }
