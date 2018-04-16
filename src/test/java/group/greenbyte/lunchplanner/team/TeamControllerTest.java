@@ -144,7 +144,7 @@ public class TeamControllerTest {
     }
 
     @Test
-    public void test5CreateTeamDescriptionTooLong() throws Exception {
+    public void test6CreateTeamDescriptionTooLong() throws Exception {
         int parent = 1;
 
         TeamJson teamJson = new TeamJson(parent,createString(50), createString(1001));
