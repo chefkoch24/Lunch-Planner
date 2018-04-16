@@ -21,6 +21,8 @@ public class UserLogicTest {
     @Autowired
     private UserLogic userLogic;
 
+    // ------------- CREATE USER ------------------
+
     @Test
     public void test1CreateUserValidParam() throws Exception{
         String userName = createString(50);
