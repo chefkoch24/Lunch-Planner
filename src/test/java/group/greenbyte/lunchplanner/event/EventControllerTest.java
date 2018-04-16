@@ -183,7 +183,7 @@ public class EventControllerTest {
     // ------------------ GET ALL ------------------------
 
     @Test
-    public void test1SearchEventsForUserSearchwordIsNull() throws Exception {
+    public void test1GetAllEvents() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/event"))
                 .andExpect(MockMvcResultMatchers.status().isOk());

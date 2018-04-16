@@ -24,7 +24,7 @@ public class UserLogicTest {
     @Test
     public void test1CreateUserValidParam() throws Exception{
         String userName = createString(50);
-        String mail = "nknakldsnf@jkladsf.klen";
+        String mail = "nknakldsnf@jkldadsf.klen";
         String password = createString(80);
 
         userLogic.createUser(userName, password, mail);
