@@ -3,6 +3,8 @@ package group.greenbyte.lunchplanner.event;
 import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
+import group.greenbyte.lunchplanner.location.LocationLogic;
+import group.greenbyte.lunchplanner.location.database.Location;
 import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,13 @@ import java.util.List;
 public class EventLogic {
 
     private EventDao eventDao;
+    private LocationLogic locationLogic;
+
+    private boolean hasAdminPrivileges(Event event, String userName) {
+        //TODO hasPrivileges
+
+        return true;
+    }
 
     /**
      * Create an event. At least the eventName and a location or timeStart is needed
@@ -53,40 +62,144 @@ public class EventLogic {
         if(timeEnd.before(timeStart) || timeEnd.equals(timeStart))
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "End time must be after start time");
 
-
         try {
             return eventDao.insertEvent(userName, eventName, eventDescription, locationId, timeStart, timeEnd)
                     .getEventId();
         }catch(DatabaseException e) {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
-
-
     }
-
 
     /**
      *
      * @param username      userName that is logged in
      * @param eventId       id of the updated event
      * @param name          name of the updated event
-     * @param description   description of the updated event
-     * @param timeStart     time on which the event starts
-     * @param timEnd        time on which the event ends
      * @exception HttpRequestException  when location and timeStart not valid or eventName has no value
      *                                  or an Database error happens
      */
-    void updatEvent(String username, int eventId, String name, String description,
-                int locationId, Date timeStart, Date timEnd)  throws HttpRequestException {
+    void updateEventName(String username, int eventId, String name)  throws HttpRequestException {
+        if(name == null || name.length() == 0)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username can not be empty");
 
+        try {
+            Event event = eventDao.getEvent(eventId);
+            if(event == null || !hasAdminPrivileges(event, username))
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+
+            Event updatedEvent = eventDao.updateEventName(eventId,name);
+
+            eventChanged(updatedEvent);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
     }
+
+    /**
+     *
+     * @param username      userName that is logged in
+     * @param eventId       id of the updated event
+     * @exception HttpRequestException  when location and timeStart not valid or eventName has no value
+     *                                  or an Database error happens
+     */
+    void updateEventDescription(String username, int eventId, String description)  throws HttpRequestException {
+        try {
+            Event event = eventDao.getEvent(eventId);
+            if(event == null || !hasAdminPrivileges(event, username))
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+
+            Event updatedEvent = eventDao.updateEventDescription(eventId, description);
+
+            eventChanged(updatedEvent);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @param username      userName that is logged in
+     * @param eventId       id of the updated event
+     * @exception HttpRequestException  when location and timeStart not valid or eventName has no value
+     *                                  or an Database error happens
+     */
+    void updateEventLoction(String username, int eventId, int locationId)  throws HttpRequestException {
+        try {
+            Location location = locationLogic.getLocation(locationId);
+            if(location == null)
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Location with locationId does not exist: " + locationId);
+
+            Event event = eventDao.getEvent(eventId);
+            if(event == null || !hasAdminPrivileges(event, username))
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+
+            Event updatedEvent = eventDao.updateEventLocation(eventId, locationId);
+
+            eventChanged(updatedEvent);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @param username      userName that is logged in
+     * @param eventId       id of the updated event
+     * @param timeStart     time on which the event starts
+     * @exception HttpRequestException  when location and timeStart not valid or eventName has no value
+     *                                  or an Database error happens
+     */
+    void updateEventTimeStart(String username, int eventId, Date timeStart) throws HttpRequestException {
+        if(timeStart.before(new Date()))
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Time start is before today");
+
+        try {
+            Event event = eventDao.getEvent(eventId);
+            if(event == null || !hasAdminPrivileges(event, username))
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+
+            if(!timeStart.before(event.getEndDate()))
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Time Start is after time end");
+
+            Event updatedEvent = eventDao.updateEventTimeStart(eventId, timeStart);
+
+            eventChanged(updatedEvent);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+    /**
+     *
+     * @param username      userName that is logged in
+     * @param eventId       id of the updated event
+     * @param timeEnd        time on which the event ends
+     * @exception HttpRequestException  when location and timeStart not valid or eventName has no value
+     *                                  or an Database error happens
+     */
+    void updateEventTimeEnd(String username, int eventId, Date timeEnd)  throws HttpRequestException {
+        try {
+            Event event = eventDao.getEvent(eventId);
+            if(event == null || !hasAdminPrivileges(event, username))
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+
+            if(timeEnd.before(event.getStartDate()))
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Time end is before time start");
+
+            Event updatedEvent = eventDao.updateEventTimeEnd(eventId, timeEnd);
+
+            eventChanged(updatedEvent);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+
 
     /**
      * Will update all subscribtions for an event when it changes
      * @param event event that has changed
      */
     private void eventChanged(Event event) {
-
+        //TODO eventChanged
     }
 
     /**
@@ -105,11 +218,24 @@ public class EventLogic {
             return eventDao.search(username, "");
         }catch(DatabaseException e){
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-
         }
-
-
     }
+
+    /**
+     *
+     * @param eventId  id of the event
+     * @return Event which matched with the given id or null
+     */
+    public Event getEvent(int eventId)throws HttpRequestException{
+
+        try{
+            return eventDao.getEvent(eventId);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+
+
 
 
     @Autowired
@@ -117,4 +243,8 @@ public class EventLogic {
         this.eventDao = eventDao;
     }
 
+    @Autowired
+    public void setLocationLogic(LocationLogic locationLogic) {
+        this.locationLogic = locationLogic;
+    }
 }
