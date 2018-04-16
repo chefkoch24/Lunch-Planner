@@ -20,6 +20,9 @@ public class Team {
     @Column(length = MAX_DESCRIPION_LENGTH)
     private String description;
 
+    @Column(nullable = false, length = MAX_USERNAME_LENGTH)
+    private String adminName;
+
     @Column
     private Integer parent;
 
@@ -53,5 +56,13 @@ public class Team {
 
     public void setParent(Integer parent) {
         this.parent = parent;
+    }
+
+    public String getAdminName() {
+        return adminName;
+    }
+
+    public void setAdminName(String adminName) {
+        this.adminName = adminName;
     }
 }

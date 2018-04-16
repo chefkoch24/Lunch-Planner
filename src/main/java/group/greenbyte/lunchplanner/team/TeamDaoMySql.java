@@ -13,10 +13,17 @@ public class TeamDaoMySql implements TeamDao {
     private TeamDatabaseConnector tdc;
     @Override
     public int insertTeam(String teamName, String description, String adminName, int parent) throws DatabaseException {
+
+        if(teamName.equals(null) || description.equals(null) || adminName.equals(null) ||
+                teamName.length() == 0 || adminName.length() == 0)
+            throw new DatabaseException();
+
+
         Team team = new Team();
         team.setTeamName(teamName);
         team.setDescription(description);
         team.setParent(parent);
+        team.setAdminName(adminName);
 
         //TODO adminName
         //TODO parent object or parent Integer?
