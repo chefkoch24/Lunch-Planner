@@ -52,6 +52,7 @@ public class TeamLogic {
         }
 
     }
+    //TODO check privileges
 
     /*private boolean hasViewPrivileges(String userName, Team team){
         return false;
