@@ -32,7 +32,7 @@ public class Location {
     @OneToMany(mappedBy = "user")
     private Set<LocationAdmin> locationAdmins = new HashSet<>();
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL)
     private Set<Event> events = new HashSet<>();
 
     public Location() {
