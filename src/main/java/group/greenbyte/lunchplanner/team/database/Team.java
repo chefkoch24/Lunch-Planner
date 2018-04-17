@@ -1,37 +1,57 @@
 package group.greenbyte.lunchplanner.team.database;
 
+import group.greenbyte.lunchplanner.event.database.EventTeamVisible;
+
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Team {
 
-    static final public int MAX_NAME_LENGTH = 50;
-    static final public int MAX_DESCRIPION_LENGTH = 1000;
-    static final public int MAX_USERNAME_LENGTH = 50;
-
+    public static final int MAX_TEAMNAME_LENGHT = 50;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer teamId;
-
-    @Column(nullable = false, length = MAX_NAME_LENGTH)
-    private String teamName;
-
-    @Column(length = MAX_DESCRIPION_LENGTH)
-    private String description;
-
-    @Column(nullable = false, length = MAX_USERNAME_LENGTH)
-    private String adminName;
+    private int teamId;
 
     @Column
-    private Integer parent;
+    private boolean isPublic;
 
-    public Integer getTeamId() {
+    @Column(length = MAX_TEAMNAME_LENGHT)
+    private String teamName;
+
+    @OneToMany(mappedBy = "user")
+    private Set<TeamMember> teamsMember;
+
+    @OneToMany(mappedBy = "event")
+    private Set<EventTeamVisible> eventsVisible;
+
+    @ManyToOne
+    @JoinColumn(name = "parentTeam")
+    private Team parentTeam;
+
+    @OneToMany(mappedBy = "parentTeam")
+    private Set<Team> childTeams = new HashSet<>();
+
+    public Team() {
+        isPublic = false;
+    }
+
+    public int getTeamId() {
         return teamId;
     }
 
-    public void setTeamId(Integer teamId) {
+    public void setTeamId(int teamId) {
         this.teamId = teamId;
+    }
+
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public String getTeamName() {
@@ -42,27 +62,19 @@ public class Team {
         this.teamName = teamName;
     }
 
-    public String getDescription() {
-        return description;
+    public Set<EventTeamVisible> getEventsVisible() {
+        return eventsVisible;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setEventsVisible(Set<EventTeamVisible> eventsVisible) {
+        this.eventsVisible = eventsVisible;
     }
 
-    public Integer getParent() {
-        return parent;
+    public Set<TeamMember> getTeamsMember() {
+        return teamsMember;
     }
 
-    public void setParent(Integer parent) {
-        this.parent = parent;
-    }
-
-    public String getAdminName() {
-        return adminName;
-    }
-
-    public void setAdminName(String adminName) {
-        this.adminName = adminName;
+    public void setTeamsMember(Set<TeamMember> teamsMember) {
+        this.teamsMember = teamsMember;
     }
 }

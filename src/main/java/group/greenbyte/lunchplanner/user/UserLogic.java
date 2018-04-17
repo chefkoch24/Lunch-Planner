@@ -2,6 +2,7 @@ package group.greenbyte.lunchplanner.user;
 
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
+import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -46,9 +47,18 @@ public class UserLogic {
         }
     }
 
+    /**
+     * Send an invitation to a user (async)
+     *
+     * @param userName who intivtes
+     * @param toInviteUserName who is invited
+     */
+    public void sendInvitation(String userName, String toInviteUserName) {
+        //ToDO send notfication to user
+    }
+
     @Autowired
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
-
 }
