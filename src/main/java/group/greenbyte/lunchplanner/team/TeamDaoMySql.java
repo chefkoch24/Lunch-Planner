@@ -14,10 +14,9 @@ public class TeamDaoMySql implements TeamDao {
     @Override
     public int insertTeam(String teamName, String description, String adminName, int parent) throws DatabaseException {
 
-        if(teamName.equals(null) || description.equals(null) || adminName.equals(null) ||
+        if(teamName == null || description == null || adminName == null ||
                 teamName.length() == 0 || adminName.length() == 0)
             throw new DatabaseException();
-
 
         Team team = new Team();
         team.setTeamName(teamName);
