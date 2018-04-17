@@ -3,6 +3,7 @@ package group.greenbyte.lunchplanner.team;
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
 import group.greenbyte.lunchplanner.team.database.Team;
+import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,16 +28,16 @@ public class TeamLogic {
         if(userName.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username is empty");
 
-        if(userName.length() > Team.MAX_USERNAME_LENGTH)
+        if(userName.length() > User.MAX_USERNAME_LENGTH)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username too long");
 
         if(teamName.length() == 0)
             throw new HttpRequestException(HttpStatus.NOT_EXTENDED.value(), "Teamname is empty");
 
-        if(teamName.length() > Team.MAX_NAME_LENGTH)
+        if(teamName.length() > Team.MAX_TEAMNAME_LENGHT)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Teamname too long");
 
-        if(description.length() > Team.MAX_DESCRIPION_LENGTH)
+        if(description.length() > Team.MAX_DESCRIPTION_LENGHT)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Description too long");
 
         /*if(hasRootPrivileges(userName, teamdao.getTeam(parent)))
