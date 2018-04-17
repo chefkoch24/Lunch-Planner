@@ -58,6 +58,14 @@ public class Event {
         isPublic = false;
     }
 
+    public Integer getEventId() {
+        return eventId;
+    }
+
+    public void setEventTd(Integer eventId) {
+        this.eventId = eventId;
+    }
+
     public Date getStartDate() {
         return startDate;
     }
@@ -130,9 +138,6 @@ public class Event {
         this.teamsVisible = teamsVisible;
     }
 
-    public Integer getEventId() {
-        return eventId;
-    }
 
     public void setEventId(Integer eventId) {
         this.eventId = eventId;

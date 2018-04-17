@@ -6,6 +6,7 @@ import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
 import group.greenbyte.lunchplanner.location.LocationDao;
 import group.greenbyte.lunchplanner.location.LocationLogic;
 import group.greenbyte.lunchplanner.location.database.Location;
+import group.greenbyte.lunchplanner.user.UserLogic;
 import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ public class EventLogic {
 
     private EventDao eventDao;
     private LocationDao locationDao;
+    private UserLogic userLogic;
 
     /**
      * Checks if a user has privileges to change the event object
@@ -279,6 +281,44 @@ public class EventLogic {
         }
     }
 
+    /**
+     * Invite user to an event
+     *
+     * @param username id of the user who creates the events
+     * @param userToInvite id of the user who is invited
+     * @param eventId id of event
+     * @return the Event of the invitation
+     *
+     * @throws HttpRequestException when an unexpected error happens
+     *
+     */
+    public void inviteFriend(String username, String userToInvite, int eventId) throws HttpRequestException{
+
+        if(!isValidName(username))
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username is not valid, maximun length" + Event.MAX_USERNAME_LENGHT + ", minimum length 1");
+        if(!isValidName(userToInvite))
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username of invited user is not valid, maximun length" + Event.MAX_USERNAME_LENGHT + ", minimum length 1");
+
+        try{
+            eventDao.putUserInviteToEvent(userToInvite, eventId);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+
+        userLogic.sendInvitation(username, userToInvite);
+    }
+
+    private boolean isValidName(String name){
+        if(name.length() <= Event.MAX_USERNAME_LENGHT && name.length() > 0){
+            System.out.println("isValid");
+            return true;
+        }
+
+        else
+            return false;
+    }
+
+
     @Autowired
     public void setEventDao(EventDao eventDao) {
         this.eventDao = eventDao;
@@ -287,5 +327,10 @@ public class EventLogic {
     @Autowired
     public void setLocationDao(LocationDao locationDao) {
         this.locationDao = locationDao;
+    }
+
+    @Autowired
+    public void setUserLogic(UserLogic userLogic) {
+        this.userLogic = userLogic;
     }
 }

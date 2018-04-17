@@ -5,7 +5,9 @@ import group.greenbyte.lunchplanner.event.database.EventDatabaseConnector;
 import group.greenbyte.lunchplanner.event.database.EventInvitation;
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.location.LocationDao;
+import group.greenbyte.lunchplanner.location.database.Location;
 import group.greenbyte.lunchplanner.user.UserDao;
+import group.greenbyte.lunchplanner.user.UserJson;
 import group.greenbyte.lunchplanner.user.database.User;
 import org.hibernate.dialect.Database;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -143,6 +145,58 @@ public class EventDaoMySql implements EventDao {
         }catch(Exception e){
             throw new DatabaseException();
         }
+    }
+
+
+    @Override
+    public Event putUserInviteToEvent(String userToInviteName, int eventId) throws DatabaseException {
+
+        if(!isValidName(userToInviteName))
+            throw new DatabaseException();
+
+       try{
+           //User user = userDao.getUser(userToInviteName);
+           //Event event = getEventById(eventId);
+           User user = new User();
+           Event event = new Event();
+           Location location = new Location();
+           int locationId = 1;
+
+           event.setEventName("dummyEvent");
+           event.setEventDescription("description");
+           location.setLocationId(locationId);
+           event.setLocation(location);
+           event.setStartDate(new Date (System.currentTimeMillis()+100));
+           event.setEndDate(new Date (System.currentTimeMillis()+1000));
+           user.setUserName(userToInviteName);
+
+           EventInvitation eventInvitation = new EventInvitation();
+           eventInvitation.setUserInvited(user);
+           eventInvitation.setEventInvited(event);
+
+           event.addUsersInvited(eventInvitation);
+
+           return event;
+           //return eventDatabaseConnector.save(event);
+
+       } catch(Exception e) {
+            throw new DatabaseException();
+       }
+    }
+    @Override
+    public Event getEventById(int eventId) throws DatabaseException{
+        try {
+            return eventDatabaseConnector.getByEventId(eventId);
+        } catch (Exception e) {
+            throw new DatabaseException();
+        }
+    }
+
+    private boolean isValidName(String name){
+        if(name.length() <= Event.MAX_USERNAME_LENGHT && name.length() > 0)
+            return true;
+        else
+            return false;
     }
 
 }

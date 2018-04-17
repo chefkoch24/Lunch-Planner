@@ -30,13 +30,14 @@ public interface EventDao {
                       Date timeEnd) throws DatabaseException;
 
     /**
-     * TODO write tests
-     * Searchs for events
+<<<<<<< HEAD
+     * Get all events for a specific searchword
      *
-     * @param username who searches
-     * @param searchword for what the user is searching
-     * @return a list of events matching the search
-     * @throws DatabaseException when an error happens
+     * @param username id of the user who creates the events
+     * @param searchword word for which is searched
+     * @return List of events with this searchword
+     *
+     * @throws DatabaseException when an unexpected error happens
      */
     List<Event> search(String username,
                        String searchword)throws DatabaseException;
@@ -121,4 +122,22 @@ public interface EventDao {
     Event updateEventTimeEnd(int  eventId,
                              Date timeEnd) throws DatabaseException;
 
+    /**
+     * Insert an new invited user into an event
+     *
+     * @param userToInviteName id of the user who is invited
+     * @param eventId id of the event
+     * @return the Event of the invitation
+     *
+     * @throws DatabaseException when an unexpected error happens
+     */
+    Event putUserInviteToEvent (String userToInviteName, int eventId) throws DatabaseException;
+
+    /**
+     *
+     * @param eventId the eventID for searching
+     * @return the Event of the eventID
+     * @throws DatabaseException when an unexpected error happens
+     */
+    Event getEventById(int eventId) throws DatabaseException;
 }

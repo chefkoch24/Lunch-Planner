@@ -206,4 +206,36 @@ public class EventDaoTest {
         if(event.getEndDate().getTime() != timeEnd)
             Assert.fail("Time end was not updated");
     }
+
+    // ------------------------- PUT USER INVITE TO EVENT ------------------------------
+
+    @Test
+    public void test1inviteMaxLengthToInviteUsername() throws Exception {
+        // Database Exception da bei getEventById immer null zurück kommt, weil noch kein Eventobjekt in DB gespeichert ist
+        // alle anderen Tests schlagen fehl, weil eine DB Exception geworfen wird und damit der Statuscode 400 verbunden ist.
+        //EventJson event = new EventJson("dummy", "description", 1, System.currentTimeMillis()+1000, System.currentTimeMillis()+2000);
+
+        int eventId = 1;
+
+        String toInviteUsername = createString(50);
+
+        Event result = eventDao.putUserInviteToEvent(toInviteUsername, eventId);
+
+    }
+
+    @Test(expected = DatabaseException.class)
+    public void test2inviteInvalidToInviteUsername() throws Exception {
+        int eventId = 1;
+        String toInviteUsername = createString(51);
+
+        Event result = eventDao.putUserInviteToEvent(toInviteUsername, eventId);
+    }
+
+    @Test(expected = DatabaseException.class)
+    public void test3inviteEmptyToInviteUsername() throws Exception {
+        int eventId = 1;
+        String toInviteUsername = createString(0);
+
+        Event result = eventDao.putUserInviteToEvent(toInviteUsername, eventId);
+    }
 }

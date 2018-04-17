@@ -5,6 +5,7 @@ import group.greenbyte.lunchplanner.AppConfig;
 import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.location.LocationLogic;
 import group.greenbyte.lunchplanner.user.UserLogic;
+import group.greenbyte.lunchplanner.user.TestInvitePersonJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +27,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
+
+import java.io.Serializable;
 
 import static group.greenbyte.lunchplanner.Utils.createString;
 import static group.greenbyte.lunchplanner.Utils.getJsonFromObject;
@@ -214,6 +217,65 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.get("/event"))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
+
+    @Test
+    public void test2SearchEventsForUserSearchwordToBig() throws Exception {
+        String searchword = createString(51);
+        String json = getJsonFromObject(searchword);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/event").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    // ------------------ INVITE FRIEND ------------------------
+
+
+    @Test
+    public void test1InviteFriend() throws Exception {
+        MvcResult result = mockMvc.perform(
+                MockMvcRequestBuilders.post("/event/" + userName + "/invite/event/" + eventId))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN_VALUE))
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+    }
+
+    @Test
+    public void test2InviteFriendInvalidName() throws Exception {
+
+        String myUsername = createString(50);
+        String userToInvite = createString(51);
+        TestInvitePersonJson invitedPerson = new TestInvitePersonJson(myUsername, userToInvite, 1);
+
+        String inventedPersonJson = getJsonFromObject(invitedPerson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/event/" + userToInvite + "/invite/event/" + 1).contentType(MediaType.APPLICATION_JSON_VALUE).content(inventedPersonJson))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+
+
+    }
+
+    @Test
+    public void test3InviteFriendEmptyName() throws Exception {
+
+        String myUsername = createString(50);
+        String userToInvite = createString(0);
+        TestInvitePersonJson invitedPerson = new TestInvitePersonJson(myUsername, userToInvite, 1);
+
+        String inventedPersonJson = getJsonFromObject(invitedPerson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/event/" + userToInvite + "/invite/event/" + 1).contentType(MediaType.APPLICATION_JSON_VALUE).content(inventedPersonJson))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+
+    }
+
+
+
+
 
     // ------------------ UPDATE EVENT NAME ------------------------
 
