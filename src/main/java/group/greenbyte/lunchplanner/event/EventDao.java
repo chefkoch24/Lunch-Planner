@@ -30,7 +30,6 @@ public interface EventDao {
                       Date timeEnd) throws DatabaseException;
 
     /**
-<<<<<<< HEAD
      * Get all events for a specific searchword
      *
      * @param username id of the user who creates the events
@@ -50,25 +49,6 @@ public interface EventDao {
      */
     Event getEvent(int eventId) throws DatabaseException;
 
-    /**
-     *
-     * @param userName id of the user who creates the events
-     * @param eventName name of the event
-     * @param description description of the event
-     * @param locationId id of the location
-     * @param timeStart time when the event starts
-     * @param timEnd time when the events ends
-     * @return the updated event
-     * @throws DatabaseException when an unexpected error happens
-     */
-//    Event updateEvent(String userName,
-//                      int eventId,
-//                      String eventName,
-//                      String description,
-//                      int locationId,
-//                      Date timeStart,
-//                      Date timEnd
-//                      ) throws DatabaseException;
 
     /**
      *

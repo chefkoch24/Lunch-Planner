@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Date;
 
@@ -48,11 +49,26 @@ public class EventDaoTest {
     private int locationId;
     private int eventId;
 
+    private String eventName;
+    private String eventDescription;
+    private long eventTimeStart;
+    private long eventTimeEnd;
+
     @Before
     public void setUp() throws Exception {
+        eventName = createString(10);
+        eventDescription = createString(10);
+        eventTimeStart = System.currentTimeMillis() + 10000;
+        eventTimeEnd = eventTimeStart + 10000;
+
+        // ohne millisekunden
+        eventTimeStart = 1000 * (eventTimeStart / 1000);
+        eventTimeEnd = 1000 * (eventTimeEnd / 1000);
+
         userName = createUserIfNotExists(userLogic, "dummy");
         locationId = createLocation(locationLogic, userName, "Test location", "test description");
-        eventId = createEvent(eventLogic, userName, locationId);
+        eventId = createEvent(eventLogic, userName, eventName, eventDescription, locationId,
+                new Date(eventTimeStart), new Date(eventTimeEnd));
     }
 
     // ------------------------- CREATE EVENT ------------------------------
@@ -237,5 +253,22 @@ public class EventDaoTest {
         String toInviteUsername = createString(0);
 
         Event result = eventDao.putUserInviteToEvent(toInviteUsername, eventId);
+    }
+
+    // -------------------- GET EVENT --------------------------
+    @Test
+    public void test1GetEvent() throws Exception {
+        Event event = eventDao.getEvent(eventId);
+        Assert.assertEquals(eventName, event.getEventName());
+        Assert.assertEquals(eventDescription, event.getEventDescription());
+        Assert.assertEquals((int) eventId, (int) event.getEventId());
+        Assert.assertEquals(locationId, event.getLocation().getLocationId());
+        Assert.assertEquals(new Date(eventTimeStart), event.getStartDate());
+        Assert.assertEquals(new Date(eventTimeEnd), event.getEndDate());
+    }
+
+    @Test
+    public void test2GetEventNull() throws Exception {
+        Assert.assertNull(eventDao.getEvent(eventId + 1000));
     }
 }
