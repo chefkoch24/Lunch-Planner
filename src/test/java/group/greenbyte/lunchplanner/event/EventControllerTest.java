@@ -26,6 +26,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import java.io.Serializable;
@@ -35,6 +37,7 @@ import static group.greenbyte.lunchplanner.Utils.getJsonFromObject;
 import static group.greenbyte.lunchplanner.event.Utils.createEvent;
 import static group.greenbyte.lunchplanner.location.Utils.createLocation;
 import static group.greenbyte.lunchplanner.user.Utils.createUserIfNotExists;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration (classes = AppConfig.class)
@@ -60,14 +63,28 @@ public class EventControllerTest {
     private int locationId;
     private int eventId;
 
+    private String eventName;
+    private String eventDescription;
+    private long eventTimeStart;
+    private long eventTimeEnd;
+
     @Before
     public void setUp() throws Exception {
+        eventName = createString(10);
+        eventDescription = createString(10);
+        eventTimeStart = System.currentTimeMillis() + 10000;
+        eventTimeEnd = eventTimeStart + 10000;
+
+        // ohne millisekunden
+        eventTimeStart = 1000 * (eventTimeStart / 1000);
+        eventTimeEnd = 1000 * (eventTimeEnd / 1000);
+
         userName = createUserIfNotExists(userLogic, "dummy");
         locationId = createLocation(locationLogic, userName, "Test location", "test description");
-        eventId = createEvent(eventLogic, userName, locationId);
+        eventId = createEvent(eventLogic, userName, eventName, eventDescription, locationId,
+                new Date(eventTimeStart), new Date(eventTimeEnd));
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        //mockMvc = MockMvcBuilders.standaloneSetup(eventController).build();
     }
 
     // ------------------ CREATE EVENT ------------------------
@@ -461,4 +478,29 @@ public class EventControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 
+    // -------------------- GET EVENT ---------------------
+
+    @Test
+    public void test1GetEventValid() throws Exception {
+//        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000+0000");
+//        String timeStart = dateTimeFormatter.format(new Date(eventTimeStart));
+//        String timeEnd = dateTimeFormatter.format(new Date(eventTimeEnd));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/event/" + eventId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.eventId").value(eventId))
+                .andExpect(jsonPath("$.eventName").value(eventName))
+                .andExpect(jsonPath("$.eventDescription").value(eventDescription))
+                .andExpect(jsonPath("$.location.locationId").value(locationId))
+                .andExpect(jsonPath("$.startDate").value(eventTimeStart))
+                .andExpect(jsonPath("$.endDate").value(eventTimeEnd));
+    }
+
+    @Test
+    public void test2GetEventValid() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/event/" + eventId + 100))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
 }

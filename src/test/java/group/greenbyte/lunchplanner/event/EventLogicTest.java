@@ -185,6 +185,9 @@ public class EventLogicTest {
                 new Date(timeStart), new Date(timeEnd));
     }
 
+    // ------------------ GET ONE EVENT -------------------
+
+
 
     // ------------------------- GET ALL EVENTS ------------------------------
 

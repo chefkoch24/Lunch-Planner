@@ -20,6 +20,34 @@ public class EventController {
     private EventLogic eventLogic;
 
     /**
+     * Returns one event by his id
+     *
+     * @param eventId id of the event
+     * @param response is used to send a response code
+     * @return the event
+     */
+    @RequestMapping(value = "/{eventId}",
+                    method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
+    public Event getEvent(@PathVariable("eventId") int eventId, HttpServletResponse response) {
+        try {
+            Event event = eventLogic.getEvent(eventId);
+            if(event != null) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                return event;
+            } else {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            }
+
+        } catch (HttpRequestException e) {
+            response.setStatus(e.getStatusCode());
+            //TODO how to send error message
+        }
+
+        return null;
+    }
+
+    /**
      * Create an event with all the data given in EventJson
      *
      * @param event the object that describes the JSON object in java format
