@@ -2,6 +2,7 @@ package group.greenbyte.lunchplanner.team;
 
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.team.database.TeamDatabaseConnector;
+import group.greenbyte.lunchplanner.team.database.TeamInvitation;
 import group.greenbyte.lunchplanner.team.database.TeamMember;
 import group.greenbyte.lunchplanner.user.UserDao;
 import group.greenbyte.lunchplanner.user.database.User;
@@ -51,6 +52,44 @@ public class TeamDaoMySql implements TeamDao {
     @Override
     public Team getTeam(int teamId) throws DatabaseException {
         return null;
+    }
+
+    @Override
+    public Team putUserTeamMember(String userToInvite, int teamId) throws DatabaseException {
+
+        if(!isValidName(userToInvite))
+            throw new DatabaseException();
+
+        try{
+            //User user = userDao.getUser(userToInvite);
+            //Team team = getEventById(teamId);
+            User user = userDao.getUser(userToInvite);
+            //get Team not implemented
+            Team team = new Team();
+
+            team.setTeamName("dummyEvent");
+            //user.setUserName(userToInvite);
+
+            TeamInvitation teamInvitation = new TeamInvitation();
+            teamInvitation.setUserInvited(user);
+            teamInvitation.setTeamInvited(team);
+
+            team.addUsersInvited(teamInvitation);
+
+            return team;
+            //return eventDatabaseConnector.save(event);
+
+        } catch(Exception e) {
+            throw new DatabaseException();
+        }
+
+    }
+
+    private boolean isValidName(String name){
+        if(name.length() <= User.MAX_USERNAME_LENGTH && name.length() > 0)
+            return true;
+        else
+            return false;
     }
 
     @Autowired
