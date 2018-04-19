@@ -35,5 +35,12 @@ dependencies {
     testCompile('com.h2database:h2')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
+    //changes in frontend without restarting server
+    compile("org.springframework.boot:spring-boot-devtools")
+}
 
+
+bootRun {
+    //sourceResources sourceSets.main.resources
+    classpath = sourceSets.main.allSource
 }
