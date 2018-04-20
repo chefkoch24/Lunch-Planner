@@ -33,7 +33,7 @@ public class TeamLogicTest {
     private int parent;
 
     @Before
-    private void setUp() throws Exception {
+    public void setUp() throws Exception {
         userName = createUserIfNotExists(userLogic, "dummy");
         parent = createTeamWithoutParent(teamLogic, userName, createString(10), createString(10));
     }
@@ -42,7 +42,6 @@ public class TeamLogicTest {
 
     @Test
     public void test1CreateTeamWithNoDescription() throws Exception {
-        String userName = "A";
         String teamName = "A";
         String description = "";
 
@@ -51,7 +50,7 @@ public class TeamLogicTest {
 
     @Test
     public void test2CreateTeamWithNormalDescriptionMaxUserNameMaxTeamName() throws Exception {
-        String userName = createString(50);
+        String userName = createUserIfNotExists(userLogic, createString(50));
         String teamName = createString(50);
         String description = "Super Team";
 
@@ -60,7 +59,7 @@ public class TeamLogicTest {
 
     @Test
     public void test3CreateTeamWithMaxDescriptionMaxUserNameMaxTeamName() throws Exception {
-        String userName = createString(50);
+        String userName = createUserIfNotExists(userLogic, createString(50));
         String teamName = createString(50);
         String description = createString(1000);
 
@@ -87,7 +86,6 @@ public class TeamLogicTest {
 
     @Test(expected = HttpRequestException.class)
     public void test6CreateTeamWithNoTeamName() throws Exception {
-        String userName = createString(50);
         String teamName = "";
         String description = createString(1000);
 
@@ -96,7 +94,6 @@ public class TeamLogicTest {
 
     @Test(expected = HttpRequestException.class)
     public void test7CreateTeamTeamNameTooLong() throws Exception {
-        String userName = createString(50);
         String teamName = createString(51);
         String description = createString(1000);
 
@@ -105,7 +102,6 @@ public class TeamLogicTest {
 
     @Test(expected = HttpRequestException.class)
     public void test6CreateTeamDescriptionTooLong() throws Exception {
-        String userName = createString(50);
         String teamName = createString(50);
         String description = createString(1001);
 
