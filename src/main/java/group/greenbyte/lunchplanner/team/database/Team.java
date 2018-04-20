@@ -14,7 +14,7 @@ public class Team {
     public static final int MAX_DESCRIPTION_LENGHT = 1000;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int teamId;
 
     @Column

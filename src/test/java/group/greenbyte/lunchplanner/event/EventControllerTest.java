@@ -233,13 +233,11 @@ public class EventControllerTest {
 
     @Test
     public void test1InviteFriend() throws Exception {
-        MvcResult result = mockMvc.perform(
-                MockMvcRequestBuilders.post("/event/" + userName + "/invite/event/" + eventId))
-                .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN_VALUE))
-                .andReturn();
+        String userName = createUserIfNotExists(userLogic, createString(50));
 
-        String response = result.getResponse().getContentAsString();
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/event/" + userName + "/invite/event/" + eventId))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test

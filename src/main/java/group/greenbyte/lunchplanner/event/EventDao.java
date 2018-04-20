@@ -30,7 +30,6 @@ public interface EventDao {
                       Date timeEnd) throws DatabaseException;
 
     /**
-<<<<<<< HEAD
      * Get all events for a specific searchword
      *
      * @param username id of the user who creates the events
@@ -43,32 +42,13 @@ public interface EventDao {
                        String searchword)throws DatabaseException;
 
     /**
+     * Gets the event with location but without usersInvited and teamsVisible
      *
      * @param eventId id of the event
      * @return the searched event
      * @throws DatabaseException when an unexpected error happens
      */
     Event getEvent(int eventId) throws DatabaseException;
-
-    /**
-     *
-     * @param userName id of the user who creates the events
-     * @param eventName name of the event
-     * @param description description of the event
-     * @param locationId id of the location
-     * @param timeStart time when the event starts
-     * @param timEnd time when the events ends
-     * @return the updated event
-     * @throws DatabaseException when an unexpected error happens
-     */
-//    Event updateEvent(String userName,
-//                      int eventId,
-//                      String eventName,
-//                      String description,
-//                      int locationId,
-//                      Date timeStart,
-//                      Date timEnd
-//                      ) throws DatabaseException;
 
     /**
      *
@@ -134,10 +114,13 @@ public interface EventDao {
     Event putUserInviteToEvent (String userToInviteName, int eventId) throws DatabaseException;
 
     /**
+     * Insert an new invited user into an event as admin role
      *
-     * @param eventId the eventID for searching
-     * @return the Event of the eventID
+     * @param userToInviteName id of the user who is invited
+     * @param eventId id of the event
+     * @return the Event of the invitation
+     *
      * @throws DatabaseException when an unexpected error happens
      */
-    Event getEventById(int eventId) throws DatabaseException;
+    Event putUserInviteToEventAsAdmin (String userToInviteName, int eventId) throws DatabaseException;
 }

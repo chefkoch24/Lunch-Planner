@@ -16,9 +16,8 @@ public class Event {
     static final public int MAX_SEARCHWORD_LENGTH = 50;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer eventId;
-
 
     @Column(name="startDate")
     private Date startDate;
