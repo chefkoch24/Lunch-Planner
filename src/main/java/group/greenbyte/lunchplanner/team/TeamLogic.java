@@ -3,10 +3,8 @@ package group.greenbyte.lunchplanner.team;
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
 import group.greenbyte.lunchplanner.team.database.Team;
-<<<<<<< HEAD
-=======
+
 import group.greenbyte.lunchplanner.user.UserLogic;
->>>>>>> developement
 import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,11 +14,9 @@ import org.springframework.stereotype.Service;
 public class TeamLogic {
 
     private TeamDao teamdao;
-<<<<<<< HEAD
-=======
+
 
     private UserLogic userLogic;
->>>>>>> developement
     /**
      *
      * @param userName userName that is logged in
@@ -76,8 +72,7 @@ public class TeamLogic {
         return false;
     }*/
 
-<<<<<<< HEAD
-=======
+
     /**
      * Invite user to a team
      *
@@ -115,19 +110,16 @@ public class TeamLogic {
             return false;
     }
 
->>>>>>> developement
 
 
     @Autowired
     public void setTeamDao(TeamDao teamdao) {
         this.teamdao = teamdao;
     }
-<<<<<<< HEAD
-=======
+
 
     @Autowired
     public void setUserLogic(UserLogic userLogic) {
         this.userLogic = userLogic;
     }
->>>>>>> developement
 }

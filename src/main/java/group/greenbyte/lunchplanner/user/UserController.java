@@ -29,6 +29,23 @@ public class UserController {
         }
     }
 
+    /**
+     * register an User with Username, password and mail
+     *
+     * @param user is a json object with all attributes from UserJson
+     * @param response status 202 is Accepted
+     */
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public void registerUser(@RequestBody UserJson user, HttpServletResponse response){
+        try{
+            userLogic.getUser(user.getUserName());
+            response.setStatus((HttpServletResponse.SC_ACCEPTED));
+        }catch(HttpRequestException e){
+            response.setStatus(e.getStatusCode());
+        }
+
+    }
+
 //    /**
 //     *
 //     * @param userToInvite

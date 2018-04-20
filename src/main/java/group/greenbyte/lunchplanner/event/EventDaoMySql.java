@@ -157,11 +157,9 @@ public class EventDaoMySql implements EventDao {
        try{
            //User user = userDao.getUser(userToInviteName);
            //Event event = getEventById(eventId);
-<<<<<<< HEAD
+
            User user = new User();
-=======
-           User user = userDao.getUser(userToInviteName);
->>>>>>> developement
+           User user2 = userDao.getUser(userToInviteName);
            Event event = new Event();
            Location location = new Location();
            int locationId = 1;
@@ -172,11 +170,11 @@ public class EventDaoMySql implements EventDao {
            event.setLocation(location);
            event.setStartDate(new Date (System.currentTimeMillis()+100));
            event.setEndDate(new Date (System.currentTimeMillis()+1000));
-<<<<<<< HEAD
+
            user.setUserName(userToInviteName);
-=======
+
           // user.setUserName(userToInviteName);
->>>>>>> developement
+
 
            EventInvitation eventInvitation = new EventInvitation();
            eventInvitation.setUserInvited(user);

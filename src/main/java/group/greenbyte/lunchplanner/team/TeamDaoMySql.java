@@ -2,10 +2,7 @@ package group.greenbyte.lunchplanner.team;
 
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.team.database.TeamDatabaseConnector;
-<<<<<<< HEAD
-=======
 import group.greenbyte.lunchplanner.team.database.TeamInvitation;
->>>>>>> developement
 import group.greenbyte.lunchplanner.team.database.TeamMember;
 import group.greenbyte.lunchplanner.user.UserDao;
 import group.greenbyte.lunchplanner.user.database.User;
@@ -57,8 +54,7 @@ public class TeamDaoMySql implements TeamDao {
         return null;
     }
 
-<<<<<<< HEAD
-=======
+
     @Override
     public Team putUserTeamMember(String userToInvite, int teamId) throws DatabaseException {
 
@@ -97,7 +93,7 @@ public class TeamDaoMySql implements TeamDao {
             return false;
     }
 
->>>>>>> developement
+
     @Autowired
     public void setTdc(TeamDatabaseConnector tdc) {
         this.tdc = tdc;

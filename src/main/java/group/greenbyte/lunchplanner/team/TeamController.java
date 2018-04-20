@@ -37,8 +37,7 @@ public class TeamController {
         }
     }
 
-<<<<<<< HEAD
-=======
+
     /**
      * Invite a team meber
      *
@@ -60,7 +59,6 @@ public class TeamController {
         return "";
     }
 
->>>>>>> developement
     @Autowired
     public void setTeamLogic(TeamLogic teamlogic) {
         this.teamlogic = teamlogic;

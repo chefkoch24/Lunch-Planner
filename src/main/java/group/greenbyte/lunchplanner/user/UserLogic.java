@@ -47,6 +47,23 @@ public class UserLogic {
         }
     }
 
+    boolean userExist(String userName, String password, String mail) throws HttpRequestException{
+
+        if(userName == null || userName.length() == 0)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "user name is empty");
+
+        if(password == null || password.length() == 0)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "password is empty");
+
+        if(mail == null || mail.length() == 0)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is empty");
+
+        if(!REGEX_MAIL.matcher(mail).matches())
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is not valid");
+
+        return null;
+    }
+
     /**
      * Send an invitation to a user (async)
      *

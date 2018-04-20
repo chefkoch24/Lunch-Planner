@@ -243,7 +243,6 @@ public class EventControllerTest {
     }
 
     @Test
-<<<<<<< HEAD
     public void test2InviteFriendInvalidName() throws Exception {
 
         String myUsername = createString(50);
@@ -271,8 +270,9 @@ public class EventControllerTest {
         mockMvc.perform(
                 MockMvcRequestBuilders.post("/event/" + userToInvite + "/invite/event/" + 1).contentType(MediaType.APPLICATION_JSON_VALUE).content(inventedPersonJson))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
 
-=======
+    @Test
     public void test2InviteFriendMaxUser() throws Exception {
 
         String userName = createUserIfNotExists(userLogic, createString(50));
@@ -307,7 +307,6 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.post("/event/" + userName + "/invite/event/" + eventId))
                         .andExpect(MockMvcResultMatchers.status().isNotFound())
                         .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN_VALUE));
->>>>>>> developement
     }
 
 

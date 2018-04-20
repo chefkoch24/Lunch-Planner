@@ -1,7 +1,10 @@
 package group.greenbyte.lunchplanner.user;
 
-import java.io.Serializable;
+import sun.security.provider.SHA;
+import sun.security.rsa.RSAKeyFactory;
 
+import java.io.Serializable;
+import java.security.;
 /**
  * Stores all data that will be send or received over REST API. This class is used to convert Java
  * objects into json or json into java objects
