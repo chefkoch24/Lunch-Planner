@@ -3,10 +3,15 @@ package group.greenbyte.lunchplanner.team;
 import group.greenbyte.lunchplanner.AppConfig;
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import group.greenbyte.lunchplanner.user.UserLogic;
 import org.junit.Before;
 >>>>>>> developement
+=======
+import group.greenbyte.lunchplanner.user.UserLogic;
+import org.junit.Before;
+>>>>>>> origin/jdbc-datenbank
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +22,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 <<<<<<< HEAD
 
 import static group.greenbyte.lunchplanner.Utils.createString;
+<<<<<<< HEAD
 =======
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -28,6 +34,10 @@ import static group.greenbyte.lunchplanner.location.Utils.createLocation;
 import static group.greenbyte.lunchplanner.team.Utils.createTeam;
 import static group.greenbyte.lunchplanner.user.Utils.createUserIfNotExists;
 >>>>>>> developement
+=======
+import static group.greenbyte.lunchplanner.team.Utils.createTeamWithoutParent;
+import static group.greenbyte.lunchplanner.user.Utils.createUserIfNotExists;
+>>>>>>> origin/jdbc-datenbank
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -53,12 +63,17 @@ public class TeamLogicTest {
     private UserLogic userLogic;
 
     private String userName;
+<<<<<<< HEAD
     private int teamId;
     private String userToInvite;
+=======
+    private int parent;
+>>>>>>> origin/jdbc-datenbank
 
     @Before
     public void setUp() throws Exception {
         userName = createUserIfNotExists(userLogic, "dummy");
+<<<<<<< HEAD
         userToInvite = createUserIfNotExists(userLogic, createString(50));
         teamId = createTeam(teamLogic, userName,0);
 
@@ -68,86 +83,79 @@ public class TeamLogicTest {
     }
 
 >>>>>>> developement
+=======
+        parent = createTeamWithoutParent(teamLogic, userName, createString(10), createString(10));
+    }
+
+>>>>>>> origin/jdbc-datenbank
     // ------------------------- CREATE TEAM ------------------------------
 
     @Test
     public void test1CreateTeamWithNoDescription() throws Exception {
-        String userName = "A";
-        int parent = 1;
         String teamName = "A";
         String description = "";
 
-        teamLogic.createTeam(userName, parent, teamName, description);
+        teamLogic.createTeamWithParent(userName, parent, teamName, description);
     }
 
     @Test
     public void test2CreateTeamWithNormalDescriptionMaxUserNameMaxTeamName() throws Exception {
-        String userName = createString(50);
-        int parent = 1;
+        String userName = createUserIfNotExists(userLogic, createString(50));
         String teamName = createString(50);
         String description = "Super Team";
 
-        teamLogic.createTeam(userName, parent, teamName, description);
+        teamLogic.createTeamWithParent(userName, parent, teamName, description);
     }
 
     @Test
     public void test3CreateTeamWithMaxDescriptionMaxUserNameMaxTeamName() throws Exception {
-        String userName = createString(50);
-        int parent = 1;
+        String userName = createUserIfNotExists(userLogic, createString(50));
         String teamName = createString(50);
         String description = createString(1000);
 
-        teamLogic.createTeam(userName, parent, teamName, description);
+        teamLogic.createTeamWithParent(userName, parent, teamName, description);
     }
 
     @Test(expected = HttpRequestException.class)
     public void test4CreateTeamWithNoUserName() throws Exception {
         String userName = "";
-        int parent = 1;
         String teamName = createString(50);
         String description = createString(1000);
 
-        teamLogic.createTeam(userName, parent, teamName, description);
+        teamLogic.createTeamWithParent(userName, parent, teamName, description);
     }
 
     @Test(expected = HttpRequestException.class)
     public void test5CreateTeamUserNameTooLong() throws Exception {
         String userName = createString(51);
-        int parent = 1;
         String teamName = createString(50);
         String description = createString(1000);
 
-        teamLogic.createTeam(userName, parent, teamName, description);
+        teamLogic.createTeamWithParent(userName, parent, teamName, description);
     }
 
     @Test(expected = HttpRequestException.class)
     public void test6CreateTeamWithNoTeamName() throws Exception {
-        String userName = createString(50);
-        int parent = 1;
         String teamName = "";
         String description = createString(1000);
 
-        teamLogic.createTeam(userName, parent, teamName, description);
+        teamLogic.createTeamWithParent(userName, parent, teamName, description);
     }
 
     @Test(expected = HttpRequestException.class)
     public void test7CreateTeamTeamNameTooLong() throws Exception {
-        String userName = createString(50);
-        int parent = 1;
         String teamName = createString(51);
         String description = createString(1000);
 
-        teamLogic.createTeam(userName, parent, teamName, description);
+        teamLogic.createTeamWithParent(userName, parent, teamName, description);
     }
 
     @Test(expected = HttpRequestException.class)
     public void test6CreateTeamDescriptionTooLong() throws Exception {
-        String userName = createString(50);
-        int parent = 1;
         String teamName = createString(50);
         String description = createString(1001);
 
-        teamLogic.createTeam(userName, parent, teamName, description);
+        teamLogic.createTeamWithParent(userName, parent, teamName, description);
     }
 
 <<<<<<< HEAD

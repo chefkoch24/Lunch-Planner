@@ -15,7 +15,7 @@ public class EventInvitation implements Serializable {
 
     @Id
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "userName")
     private User userInvited;
 
     private boolean isAdmin;

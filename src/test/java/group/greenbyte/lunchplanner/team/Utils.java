@@ -1,5 +1,6 @@
 package group.greenbyte.lunchplanner.team;
 
+<<<<<<< HEAD
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -36,6 +37,17 @@ public class Utils {
     public static int createTeam(TeamLogic teamLogic, String userName, int parent) throws Exception {
 
         return teamLogic.createTeam(userName, parent, createString(10),createString(100));
+=======
+import group.greenbyte.lunchplanner.location.LocationLogic;
+
+public class Utils {
+
+    public static int createTeamWithoutParent(TeamLogic teamLogic,
+                                              String userName,
+                                              String teamName,
+                                              String description) throws Exception {
+        return teamLogic.createTeamWithoutParent(userName, teamName, description);
+>>>>>>> origin/jdbc-datenbank
     }
 
 }
