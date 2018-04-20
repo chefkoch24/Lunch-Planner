@@ -37,6 +37,30 @@ public class TeamController {
         }
     }
 
+<<<<<<< HEAD
+=======
+    /**
+     * Invite a team meber
+     *
+     * @param userToInvite id of user to invite
+     * @param teamId id of the team
+     */
+    @RequestMapping(value = "/{userToInvite}/invite/team/{teamId}", method = RequestMethod.POST,
+            produces = MediaType.TEXT_PLAIN_VALUE )
+    @ResponseBody
+    public String inviteTeamMember(@PathVariable("userToInvite") String userToInvite, @PathVariable ("teamId") int teamId, HttpServletResponse response){
+        try {
+            teamlogic.inviteTeamMember("dummy", userToInvite, teamId);
+            response.setStatus(HttpServletResponse.SC_CREATED);
+        } catch (HttpRequestException e) {
+            response.setStatus(e.getStatusCode());
+            return e.getErrorMessage();
+        }
+
+        return "";
+    }
+
+>>>>>>> developement
     @Autowired
     public void setTeamLogic(TeamLogic teamlogic) {
         this.teamlogic = teamlogic;

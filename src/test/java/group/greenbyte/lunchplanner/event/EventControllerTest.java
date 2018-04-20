@@ -243,6 +243,7 @@ public class EventControllerTest {
     }
 
     @Test
+<<<<<<< HEAD
     public void test2InviteFriendInvalidName() throws Exception {
 
         String myUsername = createString(50);
@@ -271,6 +272,42 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.post("/event/" + userToInvite + "/invite/event/" + 1).contentType(MediaType.APPLICATION_JSON_VALUE).content(inventedPersonJson))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
 
+=======
+    public void test2InviteFriendMaxUser() throws Exception {
+
+        String userName = createUserIfNotExists(userLogic, createString(50));
+
+        MvcResult result = mockMvc.perform(
+                MockMvcRequestBuilders.post("/event/" + userName + "/invite/event/" + eventId))
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN_VALUE))
+                .andReturn();
+
+        String response = result.getResponse().getContentAsString();
+    }
+
+    @Test
+    public void test3InviteFriendInvalidName() throws Exception {
+
+        String userName = createUserIfNotExists(userLogic, createString(51));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/event/" + userName + "/invite/event/" + eventId))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN_VALUE));
+
+    }
+
+    @Test (expected = AssertionError.class)
+    public void test4InviteFriendEmptyName() throws Exception {
+
+        String userName = createUserIfNotExists(userLogic, createString(1));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/event/" + userName + "/invite/event/" + eventId))
+                        .andExpect(MockMvcResultMatchers.status().isNotFound())
+                        .andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN_VALUE));
+>>>>>>> developement
     }
 
 

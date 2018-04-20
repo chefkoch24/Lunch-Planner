@@ -39,6 +39,12 @@ public class Team {
     @OneToMany(mappedBy = "parentTeam")
     private Set<Team> childTeams = new HashSet<>();
 
+<<<<<<< HEAD
+=======
+    @OneToMany(mappedBy = "userInvited")
+    private Set<TeamInvitation> usersInvited = new HashSet<>();
+
+>>>>>>> developement
     public Team() {
         isPublic = false;
     }
@@ -113,4 +119,15 @@ public class Team {
     public void setChildTeams(Set<Team> childTeams) {
         this.childTeams = childTeams;
     }
+<<<<<<< HEAD
+=======
+
+    public void addUsersInvited(TeamInvitation teamInvitation) {
+        if (usersInvited == null) {
+            usersInvited = new HashSet<>();
+        }
+
+        usersInvited.add(teamInvitation);
+    }
+>>>>>>> developement
 }
