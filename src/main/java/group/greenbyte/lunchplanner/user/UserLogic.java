@@ -5,9 +5,13 @@ import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
 import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.security.*;
 
 import java.util.regex.Pattern;
+
+import static group.greenbyte.lunchplanner.user.SecurityHelper.validatePassword;
 
 @Service
 public class UserLogic {
@@ -40,8 +44,7 @@ public class UserLogic {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is not valid");
 
         try {
-            //ToDo hash password
-            userDao.createUser(userName, password, mail);
+            userDao.createUser(userName, BCrypt.hashpw(password, BCrypt.gensalt()), mail);
         } catch (DatabaseException e) {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         }
@@ -73,7 +76,8 @@ public class UserLogic {
 
         try {
             User user = userDao.getUser(userName);
-            if(!checkPassword(password, user.getPassword())){
+
+            if(!BCrypt.checkpw(password, user.getPassword())){
                 throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "password is false");
             }
 
@@ -82,13 +86,6 @@ public class UserLogic {
         }
     }
 
-    private boolean checkPassword(String password, String userPassword){
-        //TODO hash password and check
-        if(password.equals(userPassword)){
-            return true;
-        }
-        return false;
-    }
 
     @Autowired
     public void setUserDao(UserDao userDao) {
