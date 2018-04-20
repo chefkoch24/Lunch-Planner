@@ -37,7 +37,6 @@ public class TeamController {
         }
     }
 
-<<<<<<< HEAD
 
     /**
      * Invite a team meber
@@ -59,9 +58,7 @@ public class TeamController {
 
         return "";
     }
-=======
     //TODO create team wihtout parent
->>>>>>> origin/jdbc-datenbank
 
     @Autowired
     public void setTeamLogic(TeamLogic teamlogic) {

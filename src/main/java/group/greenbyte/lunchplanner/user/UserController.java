@@ -35,11 +35,11 @@ public class UserController {
      * @param user is a json object with all attributes from UserJson
      * @param response status 202 is Accepted
      */
-    @RequestMapping(value = "", method = RequestMethod.POST)
+    @RequestMapping(value = "/registerUser", method = RequestMethod.POST)
     public void registerUser(@RequestBody UserJson user, HttpServletResponse response){
         try{
-            userLogic.getUser(user.getUserName());
-            response.setStatus((HttpServletResponse.SC_ACCEPTED));
+            userLogic.createUser(user.getUserName(), user.getPassword(), user.getMail());
+            response.setStatus(HttpServletResponse.SC_CREATED);
         }catch(HttpRequestException e){
             response.setStatus(e.getStatusCode());
         }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
 import java.util.regex.Pattern;
 
 @Service
@@ -39,14 +40,34 @@ public class UserLogic {
         if(!REGEX_MAIL.matcher(mail).matches())
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is not valid");
 
-        try {
-            //ToDo hash password
-            userDao.createUser(userName, password, mail);
-        } catch (DatabaseException e) {
+        boolean alreadyExists;
+        try{
+            alreadyExists = userExist(userName,password,mail);
+
+        }catch(HttpRequestException e){
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+
+        }
+        if(!alreadyExists) {
+            try {
+                //ToDo hash password
+                userDao.createUser(userName, password, mail);
+            } catch (DatabaseException e) {
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            }
         }
     }
 
+    /**
+     *check if User already exists
+     *
+     * @param userName his username
+     * @param password the unhashed password
+     * @param mail mail-adress
+     * @return boolean for true if already exists
+     *
+     * @throws HttpRequestException when an parameter is not valid or user already exists or an DatabaseError happens
+     */
     boolean userExist(String userName, String password, String mail) throws HttpRequestException{
 
         if(userName == null || userName.length() == 0)
@@ -61,7 +82,12 @@ public class UserLogic {
         if(!REGEX_MAIL.matcher(mail).matches())
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is not valid");
 
-        return null;
+        try{
+            return userDao.userExist(userName,password,mail);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+
+        }
     }
 
     /**

@@ -36,7 +36,6 @@ public interface TeamDao {
      */
     Team getTeam(int teamId) throws DatabaseException;
 
-<<<<<<< HEAD
 
     /**
      * Insert an new invited user into a team
@@ -48,7 +47,6 @@ public interface TeamDao {
      * @throws DatabaseException when an unexpected error happens
      */
     Team putUserTeamMember(String userToInvite, int teamId) throws DatabaseException;
-=======
     /**
      *  Gets the team object with his parent objects
      *
@@ -85,5 +83,4 @@ public interface TeamDao {
      */
     void addUserToTeam(int teamId, String userName) throws DatabaseException;
 
->>>>>>> origin/jdbc-datenbank
 }

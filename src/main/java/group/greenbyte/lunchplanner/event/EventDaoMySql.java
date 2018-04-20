@@ -165,7 +165,6 @@ public class EventDaoMySql implements EventDao {
         return putUserInvited(userToInviteName, eventId, false, false);
     }
 
-<<<<<<< HEAD
         if(!isValidName(userToInviteName))
             throw new DatabaseException();
 
@@ -196,12 +195,10 @@ public class EventDaoMySql implements EventDao {
            eventInvitation.setEventInvited(event);
 
            event.addUsersInvited(eventInvitation);
-=======
     @Override
     public Event putUserInviteToEventAsAdmin(String userToInviteName, int eventId) throws DatabaseException {
         return putUserInvited(userToInviteName, eventId, true, true);
     }
->>>>>>> origin/jdbc-datenbank
 
     private Event putUserInvited(String userName, int eventId, boolean admin, boolean reply) throws DatabaseException {
         SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate);

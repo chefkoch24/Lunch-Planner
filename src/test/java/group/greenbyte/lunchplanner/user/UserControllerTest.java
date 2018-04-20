@@ -84,6 +84,8 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
+
+
     @Test
     public void test2CreateUserEmptyUsername() throws Exception{
         String userName = "";
@@ -201,6 +203,130 @@ public class UserControllerTest {
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.username", is("dummy")))
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.toInviteUsername", is(userName)));
 //    }
+
+    // ------------------------- REGISTER USER ------------------------------
+
+    @Test
+    public void test1RegisterUserValidParam() throws Exception{
+        String userName = createString(50);
+        String mail = "teeeaefst@yuyhinoal.dalk";
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password, mail);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/registerUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
+    @Test
+    public void test2RegisterUserEmptyUsername() throws Exception{
+        String userName = "";
+        String mail = "teasdfast@yuyhinoal.dalk";
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password, mail);
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/registerUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test3RegisterUserTooLongUserName() throws Exception{
+        String userName = createString(51);
+        String mail = "teasdfst@yuyhinoal.dalk";
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password, mail);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/registerUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test4RegisterUserEmptyPassword() throws Exception{
+        String userName = createString(50);
+        String mail = "tesdaft@yuyhinoal.dalk";
+        String password = "";
+
+        UserJson userJson = new UserJson(userName, password, mail);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/registerUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test5RegisterUserTooLongPassword() throws Exception{
+        String userName = createString(50);
+        String mail = "teaaefst@yuyhinoal.dalk";
+        String password = createString(81);
+
+        UserJson userJson = new UserJson(userName, password, mail);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/registerUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test6RegisterUserMailEmpty() throws Exception{
+        String userName = createString(50);
+        String mail = "";
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password, mail);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/registerUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test7RegisterUserTooLongEmail() throws Exception{
+        String userName = createString(50);
+        String mail = createString(50) + "@yuyhinoal.dalk";
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password, mail);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/registerUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test8RegisterUserInvalidMail() throws Exception{
+        String userName = createString(50);
+        String mail = "ungueltige-mail.de";
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password, mail);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/registerUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+
+
 
 
 

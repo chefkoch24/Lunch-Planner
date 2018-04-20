@@ -3,12 +3,9 @@ package group.greenbyte.lunchplanner.team;
 import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.event.database.EventDatabase;
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
-<<<<<<< HEAD
 import group.greenbyte.lunchplanner.team.database.TeamDatabaseConnector;
 import group.greenbyte.lunchplanner.team.database.TeamInvitation;
-=======
 import group.greenbyte.lunchplanner.team.database.TeamDatabase;
->>>>>>> origin/jdbc-datenbank
 import group.greenbyte.lunchplanner.team.database.TeamMember;
 import group.greenbyte.lunchplanner.user.UserDao;
 import group.greenbyte.lunchplanner.user.database.User;
@@ -142,7 +139,6 @@ public class TeamDaoMySql implements TeamDao {
         }
     }
 
-<<<<<<< HEAD
 
     @Override
     public Team putUserTeamMember(String userToInvite, int teamId) throws DatabaseException {
@@ -186,7 +182,6 @@ public class TeamDaoMySql implements TeamDao {
     @Autowired
     public void setTdc(TeamDatabaseConnector tdc) {
         this.tdc = tdc;
-=======
     @Override
     public void addUserToTeam(int teamId, String userName) throws DatabaseException {
         addUserToTeam(teamId, userName, false);
@@ -205,6 +200,5 @@ public class TeamDaoMySql implements TeamDao {
         } catch (Exception e) {
             throw new DatabaseException();
         }
->>>>>>> origin/jdbc-datenbank
     }
 }

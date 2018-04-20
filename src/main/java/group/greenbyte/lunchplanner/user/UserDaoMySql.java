@@ -64,4 +64,27 @@ public class UserDaoMySql implements UserDao {
             throw new DatabaseException();
         }
     }
+
+    @Override
+    public boolean userExist(String userName, String password, String mail) throws DatabaseException {
+
+        try {
+            String SQLName = "SELECT * FROM " + USER_TABLE + " WHERE " + USER_NAME + " = " + userName;
+            String SQLPassword = "SELECT * FROM " + USER_TABLE + " WHERE " + USER_PASSWORD + " = " + password;
+            String SQLMail = "SELECT * FROM " + USER_TABLE + " WHERE " + USER_MAIL + " = " + mail;
+
+            List<UserDatabase> usersNameList = jdbcTemplate.query(SQLName, new BeanPropertyRowMapper<>(UserDatabase.class));
+            List<UserDatabase> usersPasswordList = jdbcTemplate.query(SQLPassword, new BeanPropertyRowMapper<>(UserDatabase.class));
+            List<UserDatabase> usersMailList = jdbcTemplate.query(SQLMail, new BeanPropertyRowMapper<>(UserDatabase.class));
+
+            if (usersNameList.contains(userName) || usersPasswordList.contains(password) || usersMailList.contains(mail))
+                return false;
+            else {
+                return true;
+            }
+        }catch(Exception e){
+            throw new DatabaseException();
+        }
+
+    }
 }

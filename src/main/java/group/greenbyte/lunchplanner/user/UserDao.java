@@ -25,4 +25,15 @@ public interface UserDao {
      */
     void createUser(String userName, String password, String mail) throws DatabaseException;
 
+    /**
+     *
+     * @param userName his username
+     * @param password the hashed password
+     * @param mail the mail address
+     * @return if user already exist in DB
+     * @throws DatabaseException
+     */
+    boolean userExist(String userName, String password, String mail) throws DatabaseException;
+
+
 }

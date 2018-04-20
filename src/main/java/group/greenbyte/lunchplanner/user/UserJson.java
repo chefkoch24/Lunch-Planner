@@ -4,7 +4,6 @@ import sun.security.provider.SHA;
 import sun.security.rsa.RSAKeyFactory;
 
 import java.io.Serializable;
-import java.security.;
 /**
  * Stores all data that will be send or received over REST API. This class is used to convert Java
  * objects into json or json into java objects
@@ -14,6 +13,10 @@ public class UserJson implements Serializable {
     private String userName;
     private String password;
     private String mail;
+
+    public int MAX_PASSWORD_LENGTH = 80;
+    public int MAX_NAME_LENGTH = 50;
+    public int MAX_MAIL_LENGTH = 50;
 
     public UserJson(String userName, String password, String mail) {
         this.userName = userName;
