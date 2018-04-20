@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class EventInvitation implements Serializable {
 
     @Id
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "eventId")
     private Event eventInvited;
 

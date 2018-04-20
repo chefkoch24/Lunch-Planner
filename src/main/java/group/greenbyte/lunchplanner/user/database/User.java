@@ -28,10 +28,10 @@ public class User {
     @OneToMany(mappedBy = "eventInvited", cascade = CascadeType.ALL)
     private Set<EventInvitation> eventsInvited;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
     private Set<TeamMember> teamsMember = new HashSet<>();
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<LocationAdmin> locationAdmin = new HashSet<>();
 
     public String getUserName() {

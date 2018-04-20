@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import sun.reflect.annotation.ExceptionProxy;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -56,11 +57,26 @@ public class EventLogicTest {
     private int locationId;
     private int eventId;
 
+    private String eventName;
+    private String eventDescription;
+    private long eventTimeStart;
+    private long eventTimeEnd;
+
     @Before
     public void setUp() throws Exception {
+        eventName = createString(10);
+        eventDescription = createString(10);
+        eventTimeStart = System.currentTimeMillis() + 10000;
+        eventTimeEnd = eventTimeStart + 10000;
+
+        // ohne millisekunden
+        eventTimeStart = 1000 * (eventTimeStart / 1000);
+        eventTimeEnd = 1000 * (eventTimeEnd / 1000);
+
         userName = createUserIfNotExists(userLogic, "dummy");
         locationId = createLocation(locationLogic, userName, "Test location", "test description");
-        eventId = createEvent(eventLogic, userName, locationId);
+        eventId = createEvent(eventLogic, userName, eventName, eventDescription, locationId,
+                new Date(eventTimeStart), new Date(eventTimeEnd));
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
     }
@@ -176,6 +192,23 @@ public class EventLogicTest {
 
         int result = eventLogic.createEvent(userName, eventName, description, locationId,
                 new Date(timeStart), new Date(timeEnd));
+    }
+
+    // ------------------ GET ONE EVENT -------------------
+    @Test
+    public void test1GetEvent() throws Exception {
+        Event event = eventLogic.getEvent(userName, eventId);
+        Assert.assertEquals(eventName, event.getEventName());
+        Assert.assertEquals(eventDescription, event.getEventDescription());
+        Assert.assertEquals((int) eventId, (int) event.getEventId());
+        Assert.assertEquals(locationId, event.getLocation().getLocationId());
+        Assert.assertEquals(new Date(eventTimeStart), event.getStartDate());
+        Assert.assertEquals(new Date(eventTimeEnd), event.getEndDate());
+    }
+
+    @Test
+    public void test2GetEventNull() throws Exception {
+        Assert.assertNull(eventLogic.getEvent(userName, eventId + 1000));
     }
 
 
@@ -456,6 +489,68 @@ public class EventLogicTest {
 
     }
 
+    // ------------------------- SEARCH EVENTS ------------------------------
+
+    @Test
+    public void test1searchEventForUserSearchwordAndUsernameFitIn() throws Exception{
+
+        String username = createString(1);
+        String searchword = createString(0);
+
+        eventLogic.searchEventsForUser(username,searchword);
+
+    }
+
+    @Test
+    public void test2searchEventForUserSearchwordAndUsernameFitIn() throws Exception{
+
+        String username = createString(50);
+        String searchword = createString(50);
+
+        eventLogic.searchEventsForUser(username,searchword);
+
+    }
+
+
+    @Test (expected = HttpRequestException.class)
+    public void test3searchEventForUserUserNameIsNull() throws Exception{
+
+        String username = createString(0);
+        String searchword = createString(1);
+
+        eventLogic.searchEventsForUser(username,searchword);
+
+    }
+
+    @Test (expected = HttpRequestException.class)
+    public void test4searchEventForUserUserNameIsToLong() throws Exception{
+
+        String username = createString(51);
+        String searchword = createString(1);
+
+        eventLogic.searchEventsForUser(username,searchword);
+
+    }
+
+    @Test (expected = HttpRequestException.class)
+    public void test5searchEventForUserUSearchwordIsNull() throws Exception{
+
+        String username = createString(1);
+        String searchword = null;
+
+        eventLogic.searchEventsForUser(username,searchword);
+
+    }
+
+    @Test (expected = HttpRequestException.class)
+    public void test6searchEventForUserSearchwordIsToOLong() throws Exception{
+
+        String username = createString(50);
+        String searchword = createString(51);
+
+        eventLogic.searchEventsForUser(username,searchword);
+
+    }
 
 
 }
