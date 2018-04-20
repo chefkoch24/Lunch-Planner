@@ -69,7 +69,6 @@ public class EventLogicTest {
 
     @Test
     public void test1createEventNoDescription() throws Exception{
-        String userName = createString(50);
         String eventName = createString(50);
         String description = "";
         int locationId = 1;
@@ -83,7 +82,6 @@ public class EventLogicTest {
 
     @Test
     public void test2createEventLongDescription() throws Exception {
-        String userName = createString(50);
         String eventName = createString(50);
         String description = createString(1000);
         int locationId = 1;
@@ -122,7 +120,6 @@ public class EventLogicTest {
 
     @Test(expected = HttpRequestException.class)
     public void test5createEventEmptyEventName() throws Exception {
-        String userName = createString(50);
         String eventName = "";
         String description = "";
         int locationId = 1;
@@ -135,7 +132,6 @@ public class EventLogicTest {
 
     @Test(expected = HttpRequestException.class)
     public void test6createEventTooLongEventName() throws Exception {
-        String userName = createString(50);
         String eventName = createString(51);
         String description = "";
         int locationId = 1;
@@ -148,7 +144,6 @@ public class EventLogicTest {
 
     @Test(expected = HttpRequestException.class)
     public void test7createEventTooLongDescription() throws Exception {
-        String userName = createString(50);
         String eventName = createString(50);
         String description = createString(1001);
         int locationId = 1;
@@ -161,7 +156,6 @@ public class EventLogicTest {
 
     @Test(expected = HttpRequestException.class)
     public void test8createEventTimeStartTooEarly() throws Exception {
-        String userName = createString(50);
         String eventName = createString(50);
         String description = "";
         int locationId = 1;
@@ -174,7 +168,6 @@ public class EventLogicTest {
 
     @Test(expected = HttpRequestException.class)
     public void test4createEventTimeStartAfterTimeEnd() throws Exception {
-        String userName = createString(50);
         String eventName = createString(50);
         String description = "";
         int locationId = 1;
@@ -204,8 +197,6 @@ public class EventLogicTest {
 
     @Test
     public void test5getAllEventsOk() throws Exception {
-        String userName  = createString(50);
-
         List<Event> result = eventLogic.getAllEvents(userName);
     }
 
