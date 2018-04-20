@@ -47,7 +47,7 @@ public class UserController {
      * @param user
      * @param response
      */
-    @RequestMapping(value = "/user/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/loginUser", method = RequestMethod.POST)
     public void loginUser(@RequestBody UserJson user, HttpServletResponse response) {
         try {
             userLogic.loginUser(user.getUserName(), user.getPassword());
