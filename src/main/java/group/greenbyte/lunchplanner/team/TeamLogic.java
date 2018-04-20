@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class TeamLogic {
 
     private TeamDao teamdao;
+
     /**
      *
      * @param userName userName that is logged in
@@ -22,9 +23,42 @@ public class TeamLogic {
      * @throws HttpRequestException when teamName, userName, description not valid
      * or an Database error happens
      */
+    int createTeamWithParent(String userName, int parent, String teamName, String description) throws HttpRequestException {
+        checkParams(userName, teamName, description);
 
-    int createTeam(String userName, int parent, String teamName, String description) throws HttpRequestException {
+        /*if(hasRootPrivileges(userName, teamdao.getTeam(parent)))
+            throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "No Privileges");*/
 
+        /*if(canCreateTeam(teamdao.getTeam(parent), teamName))
+            throw new HttpRequestException(HttpStatus.CONFLICT.value(), "Team already exists");*/
+
+        try {
+            return teamdao.insertTeamWithParent(teamName, description, userName, parent);
+        } catch(DatabaseException d){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @param userName userName that is logged in
+     * @param teamName name of the new team
+     * @param description description of the new location
+     * @return the id of the new team
+     * @throws HttpRequestException when teamName, userName, description not valid
+     * or an Database error happens
+     */
+    int createTeamWithoutParent(String userName, String teamName, String description) throws HttpRequestException {
+        checkParams(userName, teamName, description);
+
+        try {
+            return teamdao.insertTeam(teamName, description, userName);
+        } catch(DatabaseException d){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
+        }
+    }
+
+    private void checkParams(String userName, String teamName, String description) throws HttpRequestException {
         if(userName.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username is empty");
 
@@ -39,20 +73,8 @@ public class TeamLogic {
 
         if(description.length() > Team.MAX_DESCRIPTION_LENGHT)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Description too long");
-
-        /*if(hasRootPrivileges(userName, teamdao.getTeam(parent)))
-            throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "No Privileges");*/
-
-        /*if(canCreateTeam(teamdao.getTeam(parent), teamName))
-            throw new HttpRequestException(HttpStatus.CONFLICT.value(), "Team already exists");*/
-
-        try {
-            return teamdao.insertTeam(teamName, description, userName, parent);
-        } catch(DatabaseException d){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
-        }
-
     }
+
     //TODO check privileges
 
     /*private boolean hasViewPrivileges(String userName, Team team){

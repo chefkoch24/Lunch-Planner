@@ -16,9 +16,6 @@ public class User {
     static final public int MAX_PASSWORD_LENGTH = 80;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer userId;
-
     @Column(unique = true,length = MAX_USERNAME_LENGTH)
     private String userName;
 
@@ -74,13 +71,5 @@ public class User {
             eventsInvited = new HashSet<>();
 
         eventsInvited.add(eventInvitation);
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 }
