@@ -68,4 +68,12 @@ public class LocationDatabase {
     public double getY_coordinate() {
         return y_coordinate;
     }
+
+    public void setLocationId(int locationId) {
+        this.locationId = locationId;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
+    }
 }
