@@ -57,6 +57,39 @@ public class UserLogic {
         //ToDO send notfication to user
     }
 
+    /**
+     * Login
+     *
+     * @param userName
+     * @param password
+     * @throws HttpRequestException
+     */
+    public void loginUser(String userName, String password) throws HttpRequestException{
+        if(userName == null || userName.length() == 0)
+        throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "user name is empty");
+
+        if(password == null || password.length() == 0)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "password is empty");
+
+        try {
+            User user = userDao.getUser(userName);
+            if(!checkPassword(password, user.getPassword())){
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "password is false");
+            }
+
+        }catch(DatabaseException d) {
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
+        }
+    }
+
+    private boolean checkPassword(String password, String userPassword){
+        //TODO hash password and check
+        if(password.equals(userPassword)){
+            return true;
+        }
+        return false;
+    }
+
     @Autowired
     public void setUserDao(UserDao userDao) {
         this.userDao = userDao;

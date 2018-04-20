@@ -41,6 +41,22 @@ public class UserController {
 //        return "";
 //    }
 
+    /**
+     * login with username oder mail
+     *
+     * @param user
+     * @param response
+     */
+    @RequestMapping(value = "/user/login", method = RequestMethod.POST)
+    public void loginUser(@RequestBody UserJson user, HttpServletResponse response) {
+        try {
+            userLogic.loginUser(user.getUserName(), user.getPassword());
+            response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        } catch (HttpRequestException e) {
+            response.setStatus(e.getStatusCode());
+        }
+    }
+
     @Autowired
     public void setUserLogic(UserLogic userLogic) {
         this.userLogic = userLogic;
