@@ -154,7 +154,7 @@ public class TeamDaoMySql implements TeamDao {
 
             return count != 0;
         } catch (Exception e)  {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
@@ -169,7 +169,7 @@ public class TeamDaoMySql implements TeamDao {
 
             return count != 0;
         } catch (Exception e)  {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
