@@ -30,7 +30,7 @@ public class EventController {
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getEvent(@PathVariable("eventId") int eventId) {
         try {
-            Event event = eventLogic.getEvent(eventId);
+            Event event = eventLogic.getEvent("dummy", eventId);
             if(event != null) {
                 return ResponseEntity
                         .status(HttpStatus.OK)
@@ -107,7 +107,7 @@ public class EventController {
     @ResponseBody
     public String updateEventLocation(@RequestBody String location, @PathVariable(value = "eventId") int eventId, HttpServletResponse response) {
         try {
-            eventLogic.updateEventLoction("dummy",eventId,Integer.valueOf(location));
+            eventLogic.updateEventLocation("dummy",eventId,Integer.valueOf(location));
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             return "";
