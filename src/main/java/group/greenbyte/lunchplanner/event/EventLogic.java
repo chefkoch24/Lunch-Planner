@@ -109,6 +109,9 @@ public class EventLogic {
         if(name == null || name.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username can not be empty");
 
+        if(name.length() > Event.MAX_EVENTNAME_LENGTH)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Too long name");
+
         try {
             Event event = eventDao.getEvent(eventId);
             if(event == null)
@@ -134,6 +137,9 @@ public class EventLogic {
      */
     void updateEventDescription(String username, int eventId, String description)  throws HttpRequestException {
         try {
+            if(description.length() > Event.MAX_DESCRITION_LENGTH)
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Too long description");
+
             Event event = eventDao.getEvent(eventId);
             if(event == null)
                 throw new HttpRequestException(HttpStatus.NOT_FOUND.value(), "Event with eventId does not exist: " + eventId);

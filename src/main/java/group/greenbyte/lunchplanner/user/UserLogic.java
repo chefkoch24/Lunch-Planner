@@ -37,11 +37,17 @@ public class UserLogic {
         if(userName == null || userName.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "user name is empty");
 
+        if(userName.length() > User.MAX_USERNAME_LENGTH)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "user name is too long");
+
         if(password == null || password.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "password is empty");
 
         if(mail == null || mail.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is empty");
+
+        if(mail.length() > User.MAX_MAIL_LENGTH)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is too long");
 
         if(!REGEX_MAIL.matcher(mail).matches())
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is not valid");
