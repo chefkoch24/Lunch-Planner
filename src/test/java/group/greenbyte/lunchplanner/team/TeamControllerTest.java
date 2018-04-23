@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -45,7 +46,7 @@ public class TeamControllerTest {
     @Autowired
     private TeamLogic teamLogic;
 
-    private String userName;
+    private final String userName = "banane";
     private int locationId;
     private int eventId;
     private int teamId;
@@ -53,7 +54,7 @@ public class TeamControllerTest {
     @Before
     public void setUp() throws Exception {
 
-        userName = createUserIfNotExists(userLogic, "dummy");
+        createUserIfNotExists(userLogic, userName);
 
         teamId = createTeamWithoutParent(teamLogic, userName, createString(50), createString(50));
 
@@ -64,6 +65,7 @@ public class TeamControllerTest {
     // ------------------ CREATE TEAM ------------------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1CreateTeamWithNoDescription() throws Exception {
         int parent = 1;
 
@@ -88,6 +90,7 @@ public class TeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2CreateTeamWithNormalDescriptionAndMaxTeamname() throws Exception {
         int parent = 1;
 
@@ -112,6 +115,7 @@ public class TeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3CreateTeamWithNormalDescriptionAndMaxTeamName() throws Exception {
         int parent = 1;
 
@@ -136,6 +140,7 @@ public class TeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test4CreateTeamWithNoTeamName() throws Exception {
         int parent = 1;
 
@@ -150,6 +155,7 @@ public class TeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test5CreateTeamTeamNameTooLong() throws Exception {
         int parent = 1;
 
@@ -164,6 +170,7 @@ public class TeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test6CreateTeamDescriptionTooLong() throws Exception {
         int parent = 1;
 
@@ -180,6 +187,7 @@ public class TeamControllerTest {
     // ------------------ INVITE TEAM MEMBER ------------------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1inviteTeamMember() throws Exception {
         String newUserName = createUserIfNotExists(userLogic, createString(10));
 
@@ -189,6 +197,7 @@ public class TeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2InviteTeamMemberMaxUser() throws Exception {
 
         String userName = createUserIfNotExists(userLogic, createString(50));
@@ -203,6 +212,7 @@ public class TeamControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3InviteTeamMemberInvalidName() throws Exception {
 
         String userName = createUserIfNotExists(userLogic, createString(51));
@@ -214,6 +224,7 @@ public class TeamControllerTest {
     }
 
     @Test (expected = AssertionError.class)
+    @WithMockUser(username = userName)
     public void test4InviteTeamMemberEmptyName() throws Exception {
         String userName = createUserIfNotExists(userLogic, createString(1));
 
