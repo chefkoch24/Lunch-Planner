@@ -2,10 +2,13 @@ package group.greenbyte.lunchplanner.event;
 
 import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
+import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 //import org.springframework.session.
 
@@ -30,7 +33,7 @@ public class EventController {
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getEvent(@PathVariable("eventId") int eventId) {
         try {
-            Event event = eventLogic.getEvent("dummy", eventId);
+            Event event = eventLogic.getEvent(userName, eventId);
             if(event != null) {
                 return ResponseEntity
                         .status(HttpStatus.OK)
