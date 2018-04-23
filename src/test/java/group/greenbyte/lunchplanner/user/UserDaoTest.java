@@ -29,7 +29,7 @@ public class UserDaoTest {
     public void test1CreateUserValidParam() throws Exception {
         String userName = createString(50);
         String mail = createString(50);
-        String password = createString(500);
+        String password = createString(200);
 
         userDao.createUser(userName, password, mail);
     }
@@ -38,7 +38,7 @@ public class UserDaoTest {
     public void test2CreateUserTooLongUserName() throws Exception {
         String userName = createString(51);
         String mail = createString(50);
-        String password = createString(500);
+        String password = createString(200);
 
         userDao.createUser(userName, password, mail);
     }
@@ -47,7 +47,7 @@ public class UserDaoTest {
     public void test3CreateUserTooLongPassword() throws Exception {
         String userName = createString(50);
         String mail = createString(50);
-        String password = createString(501);
+        String password = createString(201);
 
         userDao.createUser(userName, password, mail);
     }
@@ -56,7 +56,7 @@ public class UserDaoTest {
     public void test4CreateUserTooLongMail() throws Exception {
         String userName = createString(50);
         String mail = createString(51);
-        String password = createString(500);
+        String password = createString(200);
 
         userDao.createUser(userName, password, mail);
     }
