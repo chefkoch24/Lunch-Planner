@@ -19,22 +19,18 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
 
-import static group.greenbyte.lunchplanner.SessionUtils.getAuthentification;
 import static group.greenbyte.lunchplanner.Utils.createString;
 import static group.greenbyte.lunchplanner.Utils.getJsonFromObject;
 import static group.greenbyte.lunchplanner.event.Utils.createEvent;
 import static group.greenbyte.lunchplanner.location.Utils.createLocation;
 import static group.greenbyte.lunchplanner.user.Utils.createUserIfNotExists;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration (classes = AppConfig.class)
