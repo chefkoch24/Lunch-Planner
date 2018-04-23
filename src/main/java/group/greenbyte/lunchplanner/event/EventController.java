@@ -2,6 +2,7 @@ package group.greenbyte.lunchplanner.event;
 
 import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
+import group.greenbyte.lunchplanner.security.SessionManager;
 import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +34,7 @@ public class EventController {
                     produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity getEvent(@PathVariable("eventId") int eventId) {
         try {
-            Event event = eventLogic.getEvent(userName, eventId);
+            Event event = eventLogic.getEvent(SessionManager.getUserName(), eventId);
             if(event != null) {
                 return ResponseEntity
                         .status(HttpStatus.OK)
@@ -63,8 +64,7 @@ public class EventController {
     public String createEvent(@RequestBody EventJson event, HttpServletResponse response) {
 
         try {
-            //TODO change userName
-            int eventId = eventLogic.createEvent("dummy", event.getName(), event.getDescription(),
+            int eventId = eventLogic.createEvent(SessionManager.getUserName(), event.getName(), event.getDescription(),
                     event.getLocationId(), event.getTimeStart(), event.getTimeEnd());
 
             response.setStatus(HttpServletResponse.SC_CREATED);
@@ -89,7 +89,7 @@ public class EventController {
     public String updateEventName(@RequestBody String newEventName, @PathVariable(value = "eventId") int eventId, HttpServletResponse response) {
 
         try {
-            eventLogic.updateEventName("dummy",eventId,newEventName);
+            eventLogic.updateEventName(SessionManager.getUserName(),eventId,newEventName);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             return "";
@@ -110,7 +110,7 @@ public class EventController {
     @ResponseBody
     public String updateEventLocation(@RequestBody String location, @PathVariable(value = "eventId") int eventId, HttpServletResponse response) {
         try {
-            eventLogic.updateEventLocation("dummy",eventId,Integer.valueOf(location));
+            eventLogic.updateEventLocation(SessionManager.getUserName(),eventId,Integer.valueOf(location));
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             return "";
@@ -134,7 +134,7 @@ public class EventController {
     @ResponseBody
     public String updateEventDescription(@RequestBody String newEventDescription, @PathVariable(value = "eventId") int eventId, HttpServletResponse response) {
         try {
-            eventLogic.updateEventDescription("dummy",eventId,newEventDescription);
+            eventLogic.updateEventDescription(SessionManager.getUserName(),eventId,newEventDescription);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             return "";
@@ -155,7 +155,7 @@ public class EventController {
     @ResponseBody
     public String updateEventTimeStart(@RequestBody String newTimeStart, @PathVariable(value = "eventId") int eventId, HttpServletResponse response) {
         try {
-            eventLogic.updateEventTimeStart("dummy",eventId, new Date(Long.valueOf(newTimeStart)));
+            eventLogic.updateEventTimeStart(SessionManager.getUserName(),eventId, new Date(Long.valueOf(newTimeStart)));
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             return "";
@@ -179,7 +179,7 @@ public class EventController {
     @ResponseBody
     public String updateEventTimEnd(@RequestBody String newTimeEnd, @PathVariable(value = "eventId") int eventId, HttpServletResponse response) {
         try {
-            eventLogic.updateEventTimeEnd("dummy",eventId, new Date(Long.valueOf(newTimeEnd)));
+            eventLogic.updateEventTimeEnd(SessionManager.getUserName(),eventId, new Date(Long.valueOf(newTimeEnd)));
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             return "";
@@ -203,7 +203,7 @@ public class EventController {
     public ResponseEntity getAllEvents() {
 
         try {
-            List<Event> allSearchingEvents = eventLogic.getAllEvents("dummy");
+            List<Event> allSearchingEvents = eventLogic.getAllEvents(SessionManager.getUserName());
 
             for(Event event : allSearchingEvents) {
                 event.getLocation().setEvents(null);
@@ -240,7 +240,7 @@ public class EventController {
     @ResponseBody
     public ResponseEntity searchEvents(@PathVariable("searchWord") String searchword){
          try{
-             List<Event> searchingEvent = eventLogic.searchEventsForUser("dummy", searchword);
+             List<Event> searchingEvent = eventLogic.searchEventsForUser(SessionManager.getUserName(), searchword);
 
              return ResponseEntity
                      .status(HttpStatus.OK)
@@ -257,7 +257,7 @@ public class EventController {
     @ResponseBody
     public String inviteFriend(@PathVariable("userToInvite") String userToInvite, @PathVariable ("eventId") int eventId, HttpServletResponse response){
         try {
-            eventLogic.inviteFriend("dummy", userToInvite, eventId);
+            eventLogic.inviteFriend(SessionManager.getUserName(), userToInvite, eventId);
             response.setStatus(HttpServletResponse.SC_CREATED);
         } catch (HttpRequestException e) {
             response.setStatus(e.getStatusCode());
@@ -277,7 +277,7 @@ public class EventController {
     @ResponseBody
     public String reply(@PathVariable("eventId") int eventId, @RequestBody String answer, HttpServletResponse response){
         try {
-            eventLogic.reply("dummy", eventId, InvitationAnswer.fromString(answer));
+            eventLogic.reply(SessionManager.getUserName(), eventId, InvitationAnswer.fromString(answer));
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
         } catch(HttpRequestException e) {
