@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.security.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.regex.Pattern;
 
 import static group.greenbyte.lunchplanner.user.SecurityHelper.validatePassword;
@@ -47,6 +48,14 @@ public class UserLogic {
             userDao.createUser(userName, BCrypt.hashpw(password, BCrypt.gensalt()), mail);
         } catch (DatabaseException e) {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        }
+    }
+
+    public User getUser(String userName) throws HttpRequestException {
+        try {
+            return userDao.getUser(userName);
+        } catch (DatabaseException e) {
+            throw new HttpRequestException(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
     }
 

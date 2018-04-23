@@ -1,19 +1,14 @@
 package group.greenbyte.lunchplanner.event;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import group.greenbyte.lunchplanner.AppConfig;
 import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.location.LocationLogic;
 import group.greenbyte.lunchplanner.user.UserLogic;
-import group.greenbyte.lunchplanner.user.TestInvitePersonJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,13 +23,12 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
 
-import java.io.Serializable;
-
 import static group.greenbyte.lunchplanner.Utils.createString;
 import static group.greenbyte.lunchplanner.Utils.getJsonFromObject;
 import static group.greenbyte.lunchplanner.event.Utils.createEvent;
 import static group.greenbyte.lunchplanner.location.Utils.createLocation;
 import static group.greenbyte.lunchplanner.user.Utils.createUserIfNotExists;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration (classes = AppConfig.class)
@@ -51,6 +45,9 @@ public class EventControllerTest {
     private EventLogic eventLogic;
 
     @Autowired
+    private EventDao eventDao;
+
+    @Autowired
     private UserLogic userLogic;
 
     @Autowired
@@ -60,14 +57,28 @@ public class EventControllerTest {
     private int locationId;
     private int eventId;
 
+    private String eventName;
+    private String eventDescription;
+    private long eventTimeStart;
+    private long eventTimeEnd;
+
     @Before
     public void setUp() throws Exception {
+        eventName = createString(10);
+        eventDescription = createString(10);
+        eventTimeStart = System.currentTimeMillis() + 10000;
+        eventTimeEnd = eventTimeStart + 10000;
+
+        // ohne millisekunden
+        eventTimeStart = 1000 * (eventTimeStart / 1000);
+        eventTimeEnd = 1000 * (eventTimeEnd / 1000);
+
         userName = createUserIfNotExists(userLogic, "dummy");
         locationId = createLocation(locationLogic, userName, "Test location", "test description");
-        eventId = createEvent(eventLogic, userName, locationId);
+        eventId = createEvent(eventLogic, userName, eventName, eventDescription, locationId,
+                new Date(eventTimeStart), new Date(eventTimeEnd));
 
         mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        //mockMvc = MockMvcBuilders.standaloneSetup(eventController).build();
     }
 
     // ------------------ CREATE EVENT ------------------------
@@ -291,7 +302,7 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.put("/event/" + eventId + "/name").contentType(MediaType.TEXT_PLAIN_VALUE).content(eventName))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        Event event = eventLogic.getEvent(eventId);
+        Event event = eventDao.getEvent(eventId);
         if(!event.getEventName().equals(eventName))
             Assert.fail("Name was not updated");
     }
@@ -324,7 +335,7 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.put("/event/" + eventId + "/description").contentType(MediaType.TEXT_PLAIN_VALUE).content(eventDescription))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        Event event = eventLogic.getEvent(eventId);
+        Event event = eventDao.getEvent(eventId);
         if(!event.getEventDescription().equals(eventDescription))
             Assert.fail("Description was not updated");
     }
@@ -357,7 +368,7 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.put("/event/" + eventId + "/location").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(newLocationId)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        Event event = eventLogic.getEvent(eventId);
+        Event event = eventDao.getEvent(eventId);
         if(event.getLocation().getLocationId() != newLocationId)
             Assert.fail("Location was not updated");
     }
@@ -395,7 +406,7 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.put("/event/" + eventId + "/timestart").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(startTime)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        Event event = eventLogic.getEvent(eventId);
+        Event event = eventDao.getEvent(eventId);
         if(event.getStartDate().getTime() != startTime)
             Assert.fail("Time start was not updated");
     }
@@ -442,7 +453,7 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.put("/event/" + eventId + "/timeend").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(endTime)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
-        Event event = eventLogic.getEvent(eventId);
+        Event event = eventDao.getEvent(eventId);
         if(event.getEndDate().getTime() != endTime)
             Assert.fail("Time end was not updated");
     }
@@ -464,5 +475,92 @@ public class EventControllerTest {
                 MockMvcRequestBuilders.put("/event/" + eventId + "/timeend").contentType(MediaType.TEXT_PLAIN_VALUE).content("string"))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+
+    // -------------------- GET EVENT ---------------------
+
+    @Test
+    public void test1GetEventValid() throws Exception {
+//        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000+0000");
+//        String timeStart = dateTimeFormatter.format(new Date(eventTimeStart));
+//        String timeEnd = dateTimeFormatter.format(new Date(eventTimeEnd));
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/event/" + eventId))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("$.eventId").value(eventId))
+                .andExpect(jsonPath("$.eventName").value(eventName))
+                .andExpect(jsonPath("$.eventDescription").value(eventDescription))
+                .andExpect(jsonPath("$.location.locationId").value(locationId))
+                .andExpect(jsonPath("$.startDate").value(eventTimeStart))
+                .andExpect(jsonPath("$.endDate").value(eventTimeEnd));
+    }
+
+    @Test
+    public void test2GetEventValid() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/event/" + eventId + 100))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    // ---------------- SEARCH EVENTS--------------------
+    @Test
+    public void test1SearchEvents() throws Exception {
+        String searchWord = eventName;
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/event/search/" + searchWord))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    public void test1SearchEventsTooLongSearchWord() throws Exception {
+        String searchWord = createString(51);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/event/search/" + searchWord))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test1SearchEventsNoSearchWord() throws Exception {
+        String searchWord = "";
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/event/search/" + searchWord))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+
+    // ------------------ REPLY -------------------------
+    @Test
+    public void test1ReplyAccept() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/event/" + eventId + "/reply").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(InvitationAnswer.ACCEPT)))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void test2ReplyReject() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/event/" + eventId + "/reply").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(InvitationAnswer.REJECT)))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+
+    @Test
+    public void test3ReplyInvalidAnswer() throws Exception {
+        String answer = "keine lust";
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/event/" + eventId + "/reply").contentType(MediaType.TEXT_PLAIN_VALUE).content(answer))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test4ReplyEventDoesNotExist() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.put("/event/" + eventId + 100 + "/reply").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(InvitationAnswer.ACCEPT)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+
 
 }
