@@ -33,10 +33,6 @@ public class LocationDatabase {
         return location;
     }
 
-    public int getLocationId() {
-        return locationId;
-    }
-
     public void setLocationName(String locationName) {
         this.locationName = locationName;
     }
@@ -53,27 +49,7 @@ public class LocationDatabase {
         this.y_coordinate = y_coordinate;
     }
 
-    public String getLocationName() {
-        return locationName;
-    }
-
-    public String getLocationDescription() {
-        return locationDescription;
-    }
-
-    public double getX_coordinate() {
-        return x_coordinate;
-    }
-
-    public double getY_coordinate() {
-        return y_coordinate;
-    }
-
     public void setLocationId(int locationId) {
         this.locationId = locationId;
-    }
-
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
     }
 }

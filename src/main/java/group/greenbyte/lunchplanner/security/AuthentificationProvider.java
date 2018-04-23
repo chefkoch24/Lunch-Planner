@@ -19,6 +19,8 @@ import java.util.Collections;
 @Component
 public class AuthentificationProvider implements AuthenticationProvider {
 
+    //TODO how to test?
+
     private final UserLogic userLogic;
 
     @Autowired

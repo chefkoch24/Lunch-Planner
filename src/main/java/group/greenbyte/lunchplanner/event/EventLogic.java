@@ -265,7 +265,7 @@ public class EventLogic {
             if(event == null)
                 return null;
             else {
-                if(!hasPrivileges(eventId, userName))
+                if(!hasPrivileges(eventId, userName)) //TODO write test for next line
                     throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have rights to access this event");
 
                 return event;
@@ -294,7 +294,7 @@ public class EventLogic {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username of invited user is not valid, maximun length" + Event.MAX_USERNAME_LENGHT + ", minimum length 1");
 
         try{
-            if(!hasAdminPrivileges(eventId, username))
+            if(!hasAdminPrivileges(eventId, username)) //TODO write test for next line
                 throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this event");
 
             eventDao.putUserInviteToEvent(userToInvite, eventId);

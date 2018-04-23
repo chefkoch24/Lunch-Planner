@@ -17,24 +17,4 @@ public class LocationAdmin implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="userName")
     private User userAdmin;
-
-    public LocationAdmin() {
-
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public User getUserAdmin() {
-        return userAdmin;
-    }
-
-    public void setUserAdmin(User userAdmin) {
-        this.userAdmin = userAdmin;
-    }
 }

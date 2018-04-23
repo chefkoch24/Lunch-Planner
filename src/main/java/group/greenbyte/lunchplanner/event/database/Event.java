@@ -49,10 +49,6 @@ public class Event {
         return eventId;
     }
 
-    public void setEventTd(Integer eventId) {
-        this.eventId = eventId;
-    }
-
     public Date getStartDate() {
         return startDate;
     }
@@ -103,18 +99,6 @@ public class Event {
 
     public Set<EventInvitation> getUsersInvited() {
         return usersInvited;
-    }
-
-    public void setUsersInvited(Set<EventInvitation> usersInvited) {
-        this.usersInvited = usersInvited;
-    }
-
-    public void addUsersInvited(EventInvitation eventInvitation) {
-        if(usersInvited == null) {
-            usersInvited = new HashSet<>();
-        }
-
-        usersInvited.add(eventInvitation);
     }
 
     public void setEventId(Integer eventId) {

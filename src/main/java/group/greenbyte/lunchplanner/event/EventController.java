@@ -283,9 +283,6 @@ public class EventController {
         } catch(HttpRequestException e) {
             response.setStatus(e.getStatusCode());
             return e.getErrorMessage();
-        } catch(IllegalArgumentException e) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return e.getMessage();
         }
         return "";
 
