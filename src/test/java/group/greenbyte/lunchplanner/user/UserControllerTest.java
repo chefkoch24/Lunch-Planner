@@ -54,13 +54,13 @@ public class UserControllerTest {
     @Autowired
     private LocationLogic locationLogic;
 
-    private String userName;
+    private final String userName = "banane";
     private int locationId;
     private int eventId;
 
     @Before
     public void setUp() throws Exception {
-        userName = createUserIfNotExists(userLogic, "dummy");
+        createUserIfNotExists(userLogic, userName);
         locationId = createLocation(locationLogic, userName, "Test location", "test description");
         eventId = createEvent(eventLogic, userName, locationId);
 
