@@ -29,15 +29,24 @@ public class UserController {
      * Create user with username, password and mail
      *
      * @param user is a json object with all attributes from UserJson
+     * @return error message or nothing
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
+<<<<<<< HEAD
     public void createUser(@RequestBody UserJson user, HttpServletResponse response) {
+=======
+    public String createUser(@RequestBody UserJson user, HttpServletResponse response) {
+
+>>>>>>> a107950818651d115e5662ac3e1920195e324660
         try {
             userLogic.createUser(user.getUserName(), user.getPassword(), user.getMail());
             response.setStatus(HttpServletResponse.SC_CREATED);
         } catch (HttpRequestException e) {
             response.setStatus(e.getStatusCode());
+            return e.getErrorMessage();
         }
+
+        return "";
     }
 
 //    /**
@@ -59,7 +68,7 @@ public class UserController {
      *
      * @param response Status is 202 if accepted
      */
-    @RequestMapping(value = "/user/login", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/loginUser", method = RequestMethod.POST)
     public void loginUser(@RequestBody UserJson user, HttpServletResponse response) {
 
         String sessionName =

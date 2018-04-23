@@ -1,7 +1,11 @@
 package group.greenbyte.lunchplanner.user;
 
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
+import group.greenbyte.lunchplanner.team.database.Team;
 import group.greenbyte.lunchplanner.user.database.User;
+
+import java.util.List;
+import java.util.Set;
 
 public interface UserDao {
 
@@ -15,7 +19,6 @@ public interface UserDao {
     User getUser(String userName) throws DatabaseException;
 
     /**
-     * TODO: write tests
      * Creates a user
      *
      * @param userName his username

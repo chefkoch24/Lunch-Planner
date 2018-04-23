@@ -26,14 +26,29 @@ repositories {
 
 dependencies {
     compile('org.springframework.boot:spring-boot-starter-mail')
-    //compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.springframework.boot:spring-boot-starter-security')
     compile('org.springframework.boot:spring-boot-starter-web')
     compile('org.springframework.session:spring-session-core')
     compile('org.springframework.boot:spring-boot-starter-data-jpa:2.0.0.RELEASE')
+<<<<<<< HEAD
 
     runtime('org.springframework.boot:spring-boot-devtools')
+=======
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+>>>>>>> a107950818651d115e5662ac3e1920195e324660
     runtime('mysql:mysql-connector-java')
     testCompile('com.h2database:h2')
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('org.springframework.security:spring-security-test')
+<<<<<<< HEAD
+=======
+    //changes in frontend without restarting server
+    compile("org.springframework.boot:spring-boot-devtools")
+}
+
+
+bootRun {
+    //sourceResources sourceSets.main.resources
+    classpath = sourceSets.main.allSource
+>>>>>>> a107950818651d115e5662ac3e1920195e324660
 }

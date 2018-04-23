@@ -4,6 +4,8 @@ import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.event.database.EventDatabase;
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
 import group.greenbyte.lunchplanner.location.LocationDao;
+import group.greenbyte.lunchplanner.team.TeamDaoMySql;
+import group.greenbyte.lunchplanner.team.database.Team;
 import group.greenbyte.lunchplanner.user.database.User;
 import group.greenbyte.lunchplanner.user.database.UserDatabase;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Repository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Repository
 public class UserDaoMySql implements UserDao {
@@ -35,9 +38,11 @@ public class UserDaoMySql implements UserDao {
     @Override
     public User getUser(String userName) throws DatabaseException {
         try {
-            String SQL = "SELECT * FROM " + USER_TABLE + " WHERE " + USER_NAME + " = " + userName;
+            String SQL = "SELECT * FROM " + USER_TABLE + " WHERE " + USER_NAME + " = ?";
 
-            List<UserDatabase> users = jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(UserDatabase.class));
+            List<UserDatabase> users = jdbcTemplate.query(SQL,
+                    new BeanPropertyRowMapper<>(UserDatabase.class),
+                    userName);
 
             if (users.size() == 0)
                 return null;
@@ -45,7 +50,7 @@ public class UserDaoMySql implements UserDao {
                 return users.get(0).getUser();
             }
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
@@ -61,7 +66,7 @@ public class UserDaoMySql implements UserDao {
         try {
             simpleJdbcInsert.execute(new MapSqlParameterSource(parameters));
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 }

@@ -203,7 +203,92 @@ public class UserControllerTest {
 //    }
 
 
-    // ------------------------- LOGIN ------------------------------
+    // ------------------------- LOGIN USER ------------------------------
 
-    
+
+    @Test
+    public void test1LoginUser() throws Exception{
+        String userName = "A";
+        String password = "A";
+
+        UserJson userJson = new UserJson(userName, password);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isAccepted());
+    }
+
+    @Test
+    public void test2LoginUserMaxLength() throws Exception{
+        String userName = createString(50);
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isAccepted());
+    }
+
+    @Test
+    public void test3LoginUserUserNameTooLong() throws Exception{
+        String userName = createString(51);
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test4LoginUserNoUserName() throws Exception{
+        String userName = "";
+        String password = createString(80);
+
+        UserJson userJson = new UserJson(userName, password);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test5LoginUserPasswordTooLong() throws Exception{
+        String userName = createString(50);
+        String password = createString(81);
+
+        UserJson userJson = new UserJson(userName, password);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    public void test6LoginUserNoPassword() throws Exception{
+        String userName = createString(50);
+        String password = "";
+
+        UserJson userJson = new UserJson(userName, password);
+
+        String json = getJsonFromObject(userJson);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+
 }

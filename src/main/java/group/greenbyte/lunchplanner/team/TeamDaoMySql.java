@@ -32,10 +32,10 @@ public class TeamDaoMySql implements TeamDao {
     private static final String TEAM_PUBLIC = "is_public";
     private static final String TEAM_PARENT = "parent_team";
 
-    private static final String TEAM_MEMBER_TABLE = "team_member";
-    private static final String TEAM_MEMBER_USER = "user_name";
-    private static final String TEAM_MEMBER_TEAM = "team_id";
-    private static final String TEAM_MEMBER_ADMIN = "is_admin";
+    public static final String TEAM_MEMBER_TABLE = "team_member";
+    public static final String TEAM_MEMBER_USER = "user_name";
+    public static final String TEAM_MEMBER_TEAM = "team_id";
+    public static final String TEAM_MEMBER_ADMIN = "is_admin";
 
     @Autowired
     public TeamDaoMySql(UserDao userDao, JdbcTemplate jdbcTemplate) {
@@ -54,11 +54,11 @@ public class TeamDaoMySql implements TeamDao {
         try {
             Number key = simpleJdbcInsert.executeAndReturnKey(new MapSqlParameterSource(parameters));
 
-            //TODO insert admin
+            addAdminToTeam(key.intValue(), adminName);
 
             return key.intValue();
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
@@ -78,16 +78,18 @@ public class TeamDaoMySql implements TeamDao {
 
             return key.intValue();
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
     @Override
     public Team getTeam(int teamId) throws DatabaseException {
         try {
-            String SQL = "SELECT * FROM " + TEAM_TABLE + " WHERE " + TEAM_ID + " = " + teamId;
+            String SQL = "SELECT * FROM " + TEAM_TABLE + " WHERE " + TEAM_ID + " = ?";
 
-            List<TeamDatabase> teams = jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(TeamDatabase.class));
+            List<TeamDatabase> teams = jdbcTemplate.query(SQL,
+                    new BeanPropertyRowMapper<>(TeamDatabase.class),
+                    teamId);
 
             if (teams.size() == 0)
                 return null;
@@ -95,16 +97,18 @@ public class TeamDaoMySql implements TeamDao {
                 return teams.get(0).getTeam();
             }
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
     @Override
     public Team getTeamWithParent(int teamId) throws DatabaseException {
         try {
-            String SQL = "SELECT * FROM " + TEAM_TABLE + " WHERE " + TEAM_ID + " = " + teamId;
+            String SQL = "SELECT * FROM " + TEAM_TABLE + " WHERE " + TEAM_ID + " = ?";
 
-            List<TeamDatabase> teams = jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(TeamDatabase.class));
+            List<TeamDatabase> teams = jdbcTemplate.query(SQL,
+                    new BeanPropertyRowMapper<>(TeamDatabase.class),
+                    teamId);
 
             if (teams.size() == 0)
                 return null;
@@ -116,7 +120,7 @@ public class TeamDaoMySql implements TeamDao {
                 return team;
             }
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
@@ -131,15 +135,51 @@ public class TeamDaoMySql implements TeamDao {
                 " = ? AND " + TEAM_MEMBER_TEAM + " = ?";
 
         try {
-            jdbcTemplate.update(SQL, true, userName, teamId);
+            jdbcTemplate.update(SQL,
+                    true, userName, teamId);
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
     @Override
     public void addUserToTeam(int teamId, String userName) throws DatabaseException {
         addUserToTeam(teamId, userName, false);
+    }
+
+    @Override
+    public boolean hasAdminPrivileges(int teamId, String userName) throws DatabaseException {
+        try {
+            String SQL = "SELECT count(*) FROM "  + TEAM_MEMBER_TABLE + " WHERE " +
+                    TEAM_MEMBER_TEAM + " = ? AND " +
+                    TEAM_MEMBER_USER + " = ? AND " +
+                    TEAM_MEMBER_ADMIN + " = ?";
+
+            int count = jdbcTemplate.queryForObject(SQL,
+                    Integer.class,
+                    teamId, userName, true);
+
+            return count != 0;
+        } catch (Exception e)  {
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public boolean hasViewPrivileges(int teamId, String userName) throws DatabaseException {
+        try {
+            String SQL = "SELECT count(*) FROM "  + TEAM_MEMBER_TABLE + " WHERE " +
+                    TEAM_MEMBER_TEAM + " = ? AND " +
+                    TEAM_MEMBER_USER + " = ?";
+
+            int count = jdbcTemplate.queryForObject(SQL,
+                    Integer.class,
+                    teamId, userName);
+
+            return count != 0;
+        } catch (Exception e)  {
+            throw new DatabaseException(e);
+        }
     }
 
     private void addUserToTeam(int teamId, String userName, boolean admin) throws DatabaseException {
@@ -153,7 +193,7 @@ public class TeamDaoMySql implements TeamDao {
         try {
             simpleJdbcInsert.execute(new MapSqlParameterSource(parameters));
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 }

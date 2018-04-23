@@ -13,7 +13,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -61,23 +63,25 @@ public class LocationDaoMySql implements LocationDao {
 
             return key.intValue();
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
     @Override
     public Location getLocation(int locationId) throws DatabaseException {
         try {
-            String SQL = "SELECT * FROM " + LOCATION_TABLE + " WHERE " + LOCATION_ID + " = " + locationId;
+            String SQL = "SELECT * FROM " + LOCATION_TABLE + " WHERE " + LOCATION_ID + " = ?";
 
-            List<LocationDatabase> locations = jdbcTemplate.query(SQL, new BeanPropertyRowMapper<>(LocationDatabase.class));
+            List<LocationDatabase> locations = jdbcTemplate.query(SQL,
+                    new BeanPropertyRowMapper<>(LocationDatabase.class),
+                    locationId);
 
             if (locations.size() == 0)
                 return null;
             else
                 return locations.get(0).getLocation();
         } catch (Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
         }
     }
 
@@ -92,7 +96,24 @@ public class LocationDaoMySql implements LocationDao {
 
             simpleJdbcInsert.execute(new MapSqlParameterSource(parameters));
         } catch(Exception e) {
-            throw new DatabaseException();
+            throw new DatabaseException(e);
+        }
+    }
+
+    @Override
+    public boolean hasAdminPrivileges(int locationId, String userName) throws DatabaseException {
+        try {
+            String SQL = "SELECT count(*) FROM "  + LOCATION_ADMIN_TABLE + " WHERE " +
+                    LOCATION_ADMIN_LOCATION_ID + " = ? AND " +
+                    LOCATION_ADMIN_USER + " = ?";
+
+            int count = jdbcTemplate.queryForObject(SQL,
+                    Integer.class,
+                    locationId, userName);
+
+            return count != 0;
+        } catch (Exception e)  {
+            throw new DatabaseException(e);
         }
     }
 }

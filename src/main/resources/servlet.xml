@@ -1,0 +1,20 @@
+<!--<beans>-->
+    <!--<bean id="templateResolver"-->
+          <!--class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">-->
+
+        <!--<property name="prefix" value="/static" />-->
+        <!--<property name="suffix" value=".html" />-->
+        <!--<property name="templateMode" value="HTML5" />-->
+        <!--<property name="cacheable" value="false"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="templateEngine" class="org.thymeleaf.spring4.SpringTemplateEngine">-->
+        <!--<property name="templateResolver" ref="templateResolver" />-->
+    <!--</bean>-->
+
+    <!--<bean class="org.thymeleaf.spring4.view.ThymeleafViewResolver">-->
+        <!--<property name="templateEngine" ref="templateEngine" />-->
+        <!--<property name="order" value="1" />-->
+        <!--<property name="viewNames" value="*" />-->
+    <!--</bean>-->
+<!--</beans>-->

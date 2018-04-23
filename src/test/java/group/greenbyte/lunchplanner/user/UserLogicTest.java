@@ -94,4 +94,59 @@ public class UserLogicTest {
 
         userLogic.createUser(userName, password, mail);
     }
+
+    // ------------- LOGIN USER ------------------
+
+    @Test
+    public void test1LoginUser() throws Exception {
+        String userName = "A";
+        String password = "A";
+
+        userLogic.loginUser(userName, password);
+    }
+
+    @Test
+    public void test2LoginUserMaxLength() throws Exception {
+        String userName = createString(50);
+        String password = createString(80);
+
+        userLogic.loginUser(userName, password);
+    }
+
+    @Test(expected = HttpRequestException.class)
+    public void test3LoginUserUserNameTooLong() throws Exception {
+        String userName = createString(51);
+        String password = createString(80);
+
+        userLogic.loginUser(userName, password);
+    }
+
+    @Test(expected = HttpRequestException.class)
+    public void test4LoginUserNoUserName() throws Exception {
+        String userName = "";
+        String password = createString(80);
+
+        userLogic.loginUser(userName, password);
+    }
+
+    @Test(expected = HttpRequestException.class)
+    public void test5LoginUserPasswordTooLong() throws Exception {
+        String userName = createString(50);
+        String password = createString(81);
+
+        userLogic.loginUser(userName, password);
+    }
+
+    @Test(expected = HttpRequestException.class)
+    public void test6LoginUserNoPassword() throws Exception {
+        String userName = createString(50);
+        String password = "";
+
+        userLogic.loginUser(userName, password);
+    }
+
+
+
+
+
 }
