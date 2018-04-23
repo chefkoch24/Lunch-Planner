@@ -67,9 +67,7 @@ public class TeamControllerTest {
     @Test
     @WithMockUser(username = userName)
     public void test1CreateTeamWithNoDescription() throws Exception {
-        int parent = 1;
-
-        TeamJson teamJson = new TeamJson(parent, "A", "");
+        TeamJson teamJson = new TeamJson(teamId, "A", "");
 
         String json = getJsonFromObject(teamJson);
 
@@ -92,9 +90,7 @@ public class TeamControllerTest {
     @Test
     @WithMockUser(username = userName)
     public void test2CreateTeamWithNormalDescriptionAndMaxTeamname() throws Exception {
-        int parent = 1;
-
-        TeamJson teamJson = new TeamJson(parent, createString(50), "Super Team");
+        TeamJson teamJson = new TeamJson(teamId, createString(50), "Super Team");
 
         String json = getJsonFromObject(teamJson);
 
@@ -117,9 +113,7 @@ public class TeamControllerTest {
     @Test
     @WithMockUser(username = userName)
     public void test3CreateTeamWithNormalDescriptionAndMaxTeamName() throws Exception {
-        int parent = 1;
-
-        TeamJson teamJson = new TeamJson(parent, createString(50), createString(1000));
+        TeamJson teamJson = new TeamJson(teamId, createString(50), createString(1000));
 
         String json = getJsonFromObject(teamJson);
 
@@ -142,9 +136,7 @@ public class TeamControllerTest {
     @Test
     @WithMockUser(username = userName)
     public void test4CreateTeamWithNoTeamName() throws Exception {
-        int parent = 1;
-
-        TeamJson teamJson = new TeamJson(parent, "", createString(1000));
+        TeamJson teamJson = new TeamJson(teamId, "", createString(1000));
 
         String json = getJsonFromObject(teamJson);
 
@@ -157,9 +149,7 @@ public class TeamControllerTest {
     @Test
     @WithMockUser(username = userName)
     public void test5CreateTeamTeamNameTooLong() throws Exception {
-        int parent = 1;
-
-        TeamJson teamJson = new TeamJson(parent,createString(51), createString(1000));
+        TeamJson teamJson = new TeamJson(teamId,createString(51), createString(1000));
 
         String json = getJsonFromObject(teamJson);
 
@@ -172,9 +162,7 @@ public class TeamControllerTest {
     @Test
     @WithMockUser(username = userName)
     public void test6CreateTeamDescriptionTooLong() throws Exception {
-        int parent = 1;
-
-        TeamJson teamJson = new TeamJson(parent,createString(50), createString(1001));
+        TeamJson teamJson = new TeamJson(teamId,createString(50), createString(1001));
 
         String json = getJsonFromObject(teamJson);
 
