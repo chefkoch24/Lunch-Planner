@@ -33,6 +33,12 @@ import static group.greenbyte.lunchplanner.location.Utils.createLocation;
 import static group.greenbyte.lunchplanner.user.Utils.createUserIfNotExists;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
@@ -76,11 +82,11 @@ public class UserControllerTest {
         String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user")
+                post("/user")
                         .param("username", userName)
                         .param("password", password)
                         .param("email", mail))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -90,11 +96,11 @@ public class UserControllerTest {
         String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user")
+                post("/user")
                         .param("username", userName)
                         .param("password", password)
                         .param("email", mail))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -104,11 +110,11 @@ public class UserControllerTest {
         String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user")
+                post("/user")
                         .param("username", userName)
                         .param("password", password)
                         .param("email", mail))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
   
     @Test
@@ -118,11 +124,11 @@ public class UserControllerTest {
         String password = "";
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user")
+                post("/user")
                         .param("username", userName)
                         .param("password", password)
                         .param("email", mail))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -132,11 +138,11 @@ public class UserControllerTest {
         String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user")
+                post("/user")
                         .param("username", userName)
                         .param("password", password)
                         .param("email", mail))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -146,11 +152,11 @@ public class UserControllerTest {
         String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user")
+                post("/user")
                         .param("username", userName)
                         .param("password", password)
                         .param("email", mail))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -160,11 +166,11 @@ public class UserControllerTest {
         String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user")
+                post("/user")
                         .param("username", userName)
                         .param("password", password)
                         .param("email", mail))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(status().isBadRequest());
     }
 
     // ------------------------- SEND INVITATION ------------------------------
@@ -184,6 +190,14 @@ public class UserControllerTest {
 
     // ------------------------- LOGIN USER ------------------------------
 
+    //TODO test login
+//    @Test
+//    public void test1Login() throws Exception {
+//        mockMvc
+//                .perform(post("/login").param("username", userName).param("password", "1234"))
+//                .andExpect(status().isOk())
+//                .andExpect(authenticated().withUsername(userName));
+//    }
 
 //    @Test
 //    public void test1LoginUser() throws Exception{
