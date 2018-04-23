@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.security.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.regex.Pattern;
 
 import static group.greenbyte.lunchplanner.user.SecurityHelper.validatePassword;
@@ -45,9 +47,13 @@ public class UserLogic {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is not valid");
 
         try {
-            userDao.createUser(userName, BCrypt.hashpw(password, BCrypt.gensalt()), mail);
+            userDao.createUser(userName, SecurityHelper.hashPassword(password), mail);
         } catch (DatabaseException e) {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
         }
     }
 

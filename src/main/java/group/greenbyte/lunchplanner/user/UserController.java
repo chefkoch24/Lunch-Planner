@@ -20,10 +20,13 @@ public class UserController {
      * @return error message or nothing
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String createUser(@RequestBody UserJson user, HttpServletResponse response) {
+    public String createUser(@RequestParam String username,
+                             @RequestParam String password,
+                             @RequestParam String email,
+                             HttpServletResponse response) {
 
         try {
-            userLogic.createUser(user.getUserName(), user.getPassword(), user.getMail());
+            userLogic.createUser(username, password, email);
             response.setStatus(HttpServletResponse.SC_CREATED);
         } catch (HttpRequestException e) {
             response.setStatus(e.getStatusCode());
