@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -17,17 +19,21 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.Date;
 
+import static group.greenbyte.lunchplanner.SessionUtils.getAuthentification;
 import static group.greenbyte.lunchplanner.Utils.createString;
 import static group.greenbyte.lunchplanner.Utils.getJsonFromObject;
 import static group.greenbyte.lunchplanner.event.Utils.createEvent;
 import static group.greenbyte.lunchplanner.location.Utils.createLocation;
 import static group.greenbyte.lunchplanner.user.Utils.createUserIfNotExists;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -53,7 +59,7 @@ public class EventControllerTest {
     @Autowired
     private LocationLogic locationLogic;
 
-    private String userName;
+    private final String userName = "asdfsd";
     private int locationId;
     private int eventId;
 
@@ -61,6 +67,7 @@ public class EventControllerTest {
     private String eventDescription;
     private long eventTimeStart;
     private long eventTimeEnd;
+    private Authentication authentication;
 
     @Before
     public void setUp() throws Exception {
@@ -73,7 +80,7 @@ public class EventControllerTest {
         eventTimeStart = 1000 * (eventTimeStart / 1000);
         eventTimeEnd = 1000 * (eventTimeEnd / 1000);
 
-        userName = createUserIfNotExists(userLogic, "dummy");
+        createUserIfNotExists(userLogic, userName);
         locationId = createLocation(locationLogic, userName, "Test location", "test description");
         eventId = createEvent(eventLogic, userName, eventName, eventDescription, locationId,
                 new Date(eventTimeStart), new Date(eventTimeEnd));
@@ -84,6 +91,7 @@ public class EventControllerTest {
     // ------------------ CREATE EVENT ------------------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1CreateEventNoDescription() throws Exception {
         long timeStart = System.currentTimeMillis() + 100000;
 
@@ -107,6 +115,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2CreateEventNormalDescription() throws Exception {
         long timeStart = System.currentTimeMillis() + 100000;
 
@@ -130,6 +139,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3CreateEventLongDescription() throws Exception {
         long timeStart = System.currentTimeMillis() + 100000;
 
@@ -153,6 +163,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test4CreateEventNoName() throws Exception {
         long timeStart = System.currentTimeMillis() + 100000;
 
@@ -166,6 +177,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test5CreateEventNameTooLong() throws Exception {
         long timeStart = System.currentTimeMillis() + 100000;
 
@@ -179,6 +191,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test6CreateEventDescriptionTooLong() throws Exception {
         long timeStart = System.currentTimeMillis() + 100000;
 
@@ -192,6 +205,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test7CreateEventTimeStartTooLow() throws Exception {
         long timeStart = System.currentTimeMillis() - 100000;
         long timeEnd = System.currentTimeMillis() + 100000;
@@ -206,6 +220,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test8CreateEventTimeStartAfterTimeEnd() throws Exception {
         long timeStart = System.currentTimeMillis() + 100000;
         long timeEnd = System.currentTimeMillis() + 1000;
@@ -223,6 +238,7 @@ public class EventControllerTest {
     // ------------------ GET ALL ------------------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1GetAllEvents() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/event"))
@@ -230,6 +246,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2SearchEventsForUserSearchwordToBig() throws Exception {
         String searchword = createString(51);
         String json = getJsonFromObject(searchword);
@@ -243,6 +260,7 @@ public class EventControllerTest {
 
 
     @Test
+    @WithMockUser(username = userName)
     public void test1InviteFriend() throws Exception {
         String userName = createUserIfNotExists(userLogic, createString(50));
 
@@ -252,6 +270,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2InviteFriendMaxUser() throws Exception {
 
         String userName = createUserIfNotExists(userLogic, createString(50));
@@ -266,6 +285,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3InviteFriendInvalidName() throws Exception {
 
         String userName = createUserIfNotExists(userLogic, createString(51));
@@ -278,6 +298,7 @@ public class EventControllerTest {
     }
 
     @Test (expected = AssertionError.class)
+    @WithMockUser(username = userName)
     public void test4InviteFriendEmptyName() throws Exception {
 
         String userName = createUserIfNotExists(userLogic, createString(1));
@@ -295,11 +316,13 @@ public class EventControllerTest {
     // ------------------ UPDATE EVENT NAME ------------------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1updateEventName() throws Exception{
         String eventName = createString(50);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.put("/event/" + eventId + "/name").contentType(MediaType.TEXT_PLAIN_VALUE).content(eventName))
+                MockMvcRequestBuilders.put("/event/" + eventId + "/name")
+                        .contentType(MediaType.TEXT_PLAIN_VALUE).content(eventName))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
 
         Event event = eventDao.getEvent(eventId);
@@ -308,6 +331,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2updateEventNameTooLong() throws Exception{
         String eventName = createString(51);
 
@@ -317,6 +341,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3updateEventNameEmpty() throws Exception{
         String eventName = "";
 
@@ -328,6 +353,7 @@ public class EventControllerTest {
     // ------------------- UPDATE EVENT DESCRIPTION -----------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1updateEventDescription() throws Exception{
         String eventDescription = createString(50);
 
@@ -341,6 +367,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2updateEventDescriptionTooLong() throws Exception{
         String eventDescription = createString(Event.MAX_DESCRITION_LENGTH + 1);
 
@@ -350,6 +377,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3updateEventDescriptionEmpty() throws Exception{
         String eventDescription = "";
 
@@ -361,6 +389,7 @@ public class EventControllerTest {
     // ------------------ UPDATE EVENT LOCATION ------------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1updateEventLocation() throws Exception{
         int newLocationId = createLocation(locationLogic, userName, "updated event", "updated description");
 
@@ -374,6 +403,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2updateEventLocationNoInt() throws Exception{
         int newLocationId = createLocation(locationLogic, userName, "updated event", "updated description");
 
@@ -383,6 +413,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3updateEventLocationNoValidLocationId() throws Exception{
         int newLocationId = createLocation(locationLogic, userName, "updated event", "updated description");
 
@@ -393,6 +424,7 @@ public class EventControllerTest {
 
     // ------------------ UPDATE EVENT TIMESTART -------------------------
     @Test
+    @WithMockUser(username = userName)
     public void test1updateEventStartTime() throws Exception{
         long startTime = System.currentTimeMillis() + 10000;
 
@@ -412,6 +444,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2updateEventStartTimeTooEarly() throws Exception{
         long startTime = System.currentTimeMillis() - 10000;
 
@@ -421,6 +454,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3updateEventStartTimeTooLate() throws Exception{
         long startTime = System.currentTimeMillis() + 1000000000L;
 
@@ -430,6 +464,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test4updateEventStartTimeNoLongAsParameter() throws Exception{
         long startTime = System.currentTimeMillis() + 1000000000L;
 
@@ -440,6 +475,7 @@ public class EventControllerTest {
 
     // ------------------ UPDATE EVENT TIMEEND -------------------------
     @Test
+    @WithMockUser(username = userName)
     public void test1updateEventEndTime() throws Exception{
         long endTime = System.currentTimeMillis() + 1000000;
 
@@ -459,6 +495,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2updateEventEndTimeTooEarly() throws Exception{
         long endTime = System.currentTimeMillis() - 10000;
 
@@ -468,6 +505,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3updateEventEndTimeNoLongAsParameter() throws Exception{
         long endTime = System.currentTimeMillis() - 10000;
 
@@ -479,6 +517,7 @@ public class EventControllerTest {
     // -------------------- GET EVENT ---------------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1GetEventValid() throws Exception {
 //        SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.000+0000");
 //        String timeStart = dateTimeFormatter.format(new Date(eventTimeStart));
@@ -496,6 +535,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2GetEventValid() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/event/" + eventId + 100))
@@ -504,6 +544,7 @@ public class EventControllerTest {
 
     // ---------------- SEARCH EVENTS--------------------
     @Test
+    @WithMockUser(username = userName)
     public void test1SearchEvents() throws Exception {
         String searchWord = eventName;
 
@@ -513,6 +554,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test1SearchEventsTooLongSearchWord() throws Exception {
         String searchWord = createString(51);
 
@@ -522,6 +564,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test1SearchEventsNoSearchWord() throws Exception {
         String searchWord = "";
 
@@ -533,6 +576,7 @@ public class EventControllerTest {
 
     // ------------------ REPLY -------------------------
     @Test
+    @WithMockUser(username = userName)
     public void test1ReplyAccept() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/event/" + eventId + "/reply").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(InvitationAnswer.ACCEPT)))
@@ -540,6 +584,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2ReplyReject() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/event/" + eventId + "/reply").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(InvitationAnswer.REJECT)))
@@ -547,6 +592,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3ReplyInvalidAnswer() throws Exception {
         String answer = "keine lust";
         mockMvc.perform(
@@ -555,6 +601,7 @@ public class EventControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test4ReplyEventDoesNotExist() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.put("/event/" + eventId + 100 + "/reply").contentType(MediaType.TEXT_PLAIN_VALUE).content(String.valueOf(InvitationAnswer.ACCEPT)))
