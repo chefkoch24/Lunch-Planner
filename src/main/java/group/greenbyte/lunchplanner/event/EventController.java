@@ -2,13 +2,13 @@ package group.greenbyte.lunchplanner.event;
 
 import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
-import group.greenbyte.lunchplanner.user.TestInvitePersonJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+//import org.springframework.session.
 
-import javax.print.attribute.standard.Media;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +18,35 @@ import java.util.List;
 public class EventController {
 
     private EventLogic eventLogic;
+
+    /**
+     * Returns one event by his id
+     *
+     * @param eventId id of the event
+     * @return the event
+     */
+    @RequestMapping(value = "/{eventId}",
+                    method = RequestMethod.GET,
+                    produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity getEvent(@PathVariable("eventId") int eventId) {
+        try {
+            Event event = eventLogic.getEvent("dummy", eventId);
+            if(event != null) {
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(event);
+            } else {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body("Event with event-id: " + eventId + "was not found");
+            }
+
+        } catch (HttpRequestException e) {
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(e.getErrorMessage());
+        }
+    }
 
     /**
      * Create an event with all the data given in EventJson
@@ -78,7 +107,7 @@ public class EventController {
     @ResponseBody
     public String updateEventLocation(@RequestBody String location, @PathVariable(value = "eventId") int eventId, HttpServletResponse response) {
         try {
-            eventLogic.updateEventLoction("dummy",eventId,Integer.valueOf(location));
+            eventLogic.updateEventLocation("dummy",eventId,Integer.valueOf(location));
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             return "";
@@ -93,7 +122,7 @@ public class EventController {
 
     /**
      *
-     * @param newEventDescription
+     * @param newEventDescription the updated event description
      * @param eventId id of the updated event
      * @param response response channel
      */
@@ -161,25 +190,64 @@ public class EventController {
     }
 
     /**
+     * Get all events that are visible for the user who created this request
      *
-     * @param response response channel
      * @return a list of all events
      */
     @RequestMapping(value = "", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Event> getAllEvents(HttpServletResponse response) {
+    public ResponseEntity getAllEvents() {
 
         try {
             List<Event> allSearchingEvents = eventLogic.getAllEvents("dummy");
-            response.setStatus(HttpServletResponse.SC_OK);
-            return allSearchingEvents;
+
+            for(Event event : allSearchingEvents) {
+                event.getLocation().setEvents(null);
+            }
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(allSearchingEvents);
         } catch (HttpRequestException e) {
-            response.setStatus(e.getStatusCode());
-            return null;
+            return ResponseEntity
+                    .status(e.getStatusCode())
+                    .body(e.getErrorMessage());
         }
     }
 
+
+    /**
+     * only here for throwing an exception is no searchword is giving
+     */
+    @RequestMapping(value = "/search/", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String searchEventNoSearchWord() {
+        return "No searchword";
+    }
+
+    /**
+     * Search events that are visible for the user who created this request
+     *
+     * @param searchword what to search
+     * @return all events or an error message
+     */
+    @RequestMapping(value = "/search/{searchWord}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity searchEvents(@PathVariable("searchWord") String searchword){
+         try{
+             List<Event> searchingEvent = eventLogic.searchEventsForUser("dummy", searchword);
+
+             return ResponseEntity
+                     .status(HttpStatus.OK)
+                     .body(searchingEvent);
+         } catch (HttpRequestException e) {
+             return ResponseEntity
+                     .status(e.getStatusCode())
+                     .body(e.getErrorMessage());
+         }
+    }
 
     @RequestMapping(value = "/{userToInvite}/invite/event/{eventId}", method = RequestMethod.POST,
             produces = MediaType.TEXT_PLAIN_VALUE )
@@ -196,10 +264,35 @@ public class EventController {
         return "";
     }
 
+    /**
+     *
+     * @param eventId id of the event
+     * @param answer answer of the user
+     */
+    @RequestMapping(value = "/{eventId}/reply", method = RequestMethod.PUT,
+           consumes = MediaType.TEXT_PLAIN_VALUE, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String reply(@PathVariable("eventId") int eventId, @RequestBody String answer, HttpServletResponse response){
+        try {
+            eventLogic.reply("dummy", eventId, InvitationAnswer.fromString(answer));
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+
+        } catch(HttpRequestException e) {
+            response.setStatus(e.getStatusCode());
+            return e.getErrorMessage();
+        } catch(IllegalArgumentException e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return e.getMessage();
+        }
+        return "";
+
+    }
+
 
     @Autowired
     public void setEventLogic(EventLogic eventLogic) {
         this.eventLogic = eventLogic;
     }
+
 
 }

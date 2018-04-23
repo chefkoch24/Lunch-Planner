@@ -2,10 +2,12 @@ package group.greenbyte.lunchplanner.event;
 
 import group.greenbyte.lunchplanner.event.database.Event;
 import group.greenbyte.lunchplanner.exceptions.DatabaseException;
-import org.hibernate.dialect.Database;
+import group.greenbyte.lunchplanner.team.database.Team;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 
 public interface EventDao {
 
@@ -28,18 +30,6 @@ public interface EventDao {
                       int locationId,
                       Date timeStart,
                       Date timeEnd) throws DatabaseException;
-
-    /**
-     * Get all events for a specific searchword
-     *
-     * @param username id of the user who creates the events
-     * @param searchword word for which is searched
-     * @return List of events with this searchword
-     *
-     * @throws DatabaseException when an unexpected error happens
-     */
-    List<Event> search(String username,
-                       String searchword)throws DatabaseException;
 
     /**
      * Gets the event with location but without usersInvited and teamsVisible
@@ -103,6 +93,14 @@ public interface EventDao {
                              Date timeEnd) throws DatabaseException;
 
     /**
+     * For now only for test purpose
+     * @param eventId
+     * @param isPublic
+     * @throws DatabaseException
+     */
+    void updateEventIsPublic(int eventId, boolean isPublic) throws DatabaseException;
+
+    /**
      * Insert an new invited user into an event
      *
      * @param userToInviteName id of the user who is invited
@@ -114,13 +112,64 @@ public interface EventDao {
     Event putUserInviteToEvent (String userToInviteName, int eventId) throws DatabaseException;
 
     /**
-     * Insert an new invited user into an event as admin role
+     * Find all events that are public for all
      *
-     * @param userToInviteName id of the user who is invited
-     * @param eventId id of the event
-     * @return the Event of the invitation
-     *
-     * @throws DatabaseException when an unexpected error happens
+     * @param searchword for what the user is searching
+     * @return a list of events matching the search
+     * @throws DatabaseException when an error happens
      */
-    Event putUserInviteToEventAsAdmin (String userToInviteName, int eventId) throws DatabaseException;
+    List<Event> findPublicEvents(String searchword) throws DatabaseException;
+
+    /**
+     * Find all event that are public for a team
+     *
+     * @param teamId team
+     * @param searchword for what the user is searching
+     * @return a list of events matching the search
+     * @throws DatabaseException when an error happens
+     */
+    List<Event> findEventsForTeam(int teamId, String searchword) throws DatabaseException;
+
+    /**
+     * Find all event where an user is invited to
+     *
+     * @param userName the user
+     * @param searchword for what the user is searching
+     * @return a list of events matching the search
+     * @throws DatabaseException when an error happens
+     */
+    List<Event> findEventsUserInvited(String userName, String searchword) throws DatabaseException;
+
+    void putUserInviteToEventAsAdmin (String userToInviteName, int eventId) throws DatabaseException;
+
+    /**
+     * adds a team to the event
+     *
+     * @param eventId
+     * @param teamId
+     * @throws DatabaseException
+     */
+    void addTeamToEvent(int eventId, int teamId) throws DatabaseException;
+
+    /**
+     * checks if a user has admin privileges for the given event
+     *
+     * @param userName
+     * @param eventId
+     * @return true when the user has admin privileges, false if not
+     * @throws DatabaseException
+     */
+    boolean userHasAdminPrivileges(String userName, int eventId) throws DatabaseException;
+
+    /**
+     * checks if a user has privileges for the given event
+     *
+     * @param userName
+     * @param eventId
+     * @return true when the user has privileges, false if not
+     * @throws DatabaseException
+     */
+    boolean userHasPrivileges(String userName, int eventId) throws DatabaseException;
+  
+    void replyInvitation(String userName, int eventId, InvitationAnswer answer) throws DatabaseException;
 }
