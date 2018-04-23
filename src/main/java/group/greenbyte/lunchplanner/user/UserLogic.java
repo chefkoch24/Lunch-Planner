@@ -50,9 +50,7 @@ public class UserLogic {
             userDao.createUser(userName, SecurityHelper.hashPassword(password), mail);
         } catch (DatabaseException e) {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             e.printStackTrace();
         }
     }
@@ -73,32 +71,6 @@ public class UserLogic {
      */
     public void sendInvitation(String userName, String toInviteUserName) {
         //ToDO send notfication to user
-    }
-
-    /**
-     * Login
-     *
-     * @param userName
-     * @param password
-     * @throws HttpRequestException
-     */
-    public void loginUser(String userName, String password) throws HttpRequestException{
-        if(userName == null || userName.length() == 0)
-        throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "user name is empty");
-
-        if(password == null || password.length() == 0)
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "password is empty");
-
-        try {
-            User user = userDao.getUser(userName);
-
-            if(!BCrypt.checkpw(password, user.getPassword())){
-                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "password is false");
-            }
-
-        }catch(DatabaseException d) {
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
-        }
     }
 
 

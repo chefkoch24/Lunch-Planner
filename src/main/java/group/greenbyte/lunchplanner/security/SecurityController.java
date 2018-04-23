@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class SecurityController {
 
     @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model) {
+    public String login() {
         return "login";
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
-    public String registration(Model model) {
+    public String registration() {
         return "registration";
     }
 }

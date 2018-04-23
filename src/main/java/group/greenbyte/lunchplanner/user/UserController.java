@@ -32,9 +32,9 @@ public class UserController {
      * @return error message or nothing
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String createUser(@RequestParam String username,
-                             @RequestParam String password,
-                             @RequestParam String email,
+    public String createUser(@RequestParam("username") String username,
+                             @RequestParam("password") String password,
+                             @RequestParam("email") String email,
                              HttpServletResponse response) {
 
         try {
@@ -59,30 +59,6 @@ public class UserController {
 //        response.setStatus(HttpServletResponse.SC_OK);
 //        return "";
 //    }
-
-    /**
-     * login with username oder mail
-     *
-     * @param user User who liked to log in
-     *
-     * @param response Status is 202 if accepted
-     */
-    @RequestMapping(value = "/user/loginUser", method = RequestMethod.POST)
-    public void loginUser(@RequestBody UserJson user, HttpServletResponse response) {
-
-//        String sessionName =
-
-
-        try {
-            userLogic.loginUser(user.getUserName(), user.getPassword());
-            response.setStatus(HttpServletResponse.SC_ACCEPTED);
-        } catch (HttpRequestException e) {
-            response.setStatus(e.getStatusCode());
-        }
-    }
-
-
-
 
     @Autowired
     public void setUserLogic(UserLogic userLogic) {

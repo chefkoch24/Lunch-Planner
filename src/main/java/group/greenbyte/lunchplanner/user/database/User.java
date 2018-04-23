@@ -13,7 +13,7 @@ public class User {
 
     static final public int MAX_USERNAME_LENGTH = 50;
     static final public int MAX_MAIL_LENGTH = 50;
-    static final public int MAX_PASSWORD_LENGTH = 500;
+    static final public int MAX_PASSWORD_LENGTH = 200;
 
     @Id
     @Column(unique = true,length = MAX_USERNAME_LENGTH)
