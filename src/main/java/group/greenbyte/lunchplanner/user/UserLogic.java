@@ -48,10 +48,8 @@ public class UserLogic {
 
         try {
             userDao.createUser(userName, SecurityHelper.hashPassword(password), mail);
-        } catch (DatabaseException e) {
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
+        } catch (DatabaseException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -59,7 +57,7 @@ public class UserLogic {
         try {
             return userDao.getUser(userName);
         } catch (DatabaseException e) {
-            throw new HttpRequestException(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 

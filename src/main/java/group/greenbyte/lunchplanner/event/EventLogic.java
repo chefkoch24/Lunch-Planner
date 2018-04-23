@@ -93,7 +93,7 @@ public class EventLogic {
             return eventDao.insertEvent(userName, eventName, eventDescription, locationId, timeStart, timeEnd)
                     .getEventId();
         }catch(DatabaseException e) {
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -121,7 +121,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -145,7 +145,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -173,7 +173,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -204,7 +204,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
     /**
@@ -231,7 +231,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -271,7 +271,7 @@ public class EventLogic {
                 return event;
             }
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -299,7 +299,7 @@ public class EventLogic {
 
             eventDao.putUserInviteToEvent(userToInvite, eventId);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
         userLogic.sendInvitation(username, userToInvite);
@@ -326,7 +326,7 @@ public class EventLogic {
 
             eventDao.replyInvitation(userName, eventId, answer);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -359,7 +359,7 @@ public class EventLogic {
             return new ArrayList<>(searchResults);
 
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 

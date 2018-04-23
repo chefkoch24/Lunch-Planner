@@ -46,7 +46,7 @@ public class LocationLogic {
         try {
             return locationDao.insertLocation(locationName, new Coordinate(xCoordinate, yCoordinate), description, userName);
         } catch(DatabaseException d){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), d.getMessage());
         }
     }
 
@@ -70,7 +70,7 @@ public class LocationLogic {
                 return location;
             }
         } catch (DatabaseException e) {
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
