@@ -1,15 +1,27 @@
 package group.greenbyte.lunchplanner.user;
 
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
+import org.springframework.session.Session.*;
+import org.springframework.security.core.Authentication.*;
+
 
 @RestController
+
 @RequestMapping("/user")
 public class UserController {
+
+
+//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private SpringSessionRememberMeServices a;
 
     private UserLogic userLogic;
 
@@ -51,11 +63,16 @@ public class UserController {
     /**
      * login with username oder mail
      *
-     * @param user
-     * @param response
+     * @param user User who liked to log in
+     *
+     * @param response Status is 202 if accepted
      */
     @RequestMapping(value = "/user/loginUser", method = RequestMethod.POST)
     public void loginUser(@RequestBody UserJson user, HttpServletResponse response) {
+
+//        String sessionName =
+
+
         try {
             userLogic.loginUser(user.getUserName(), user.getPassword());
             response.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -63,6 +80,9 @@ public class UserController {
             response.setStatus(e.getStatusCode());
         }
     }
+
+
+
 
     @Autowired
     public void setUserLogic(UserLogic userLogic) {
