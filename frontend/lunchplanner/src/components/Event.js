@@ -1,17 +1,17 @@
 import React from "react";
-import PropTypes from "prop-types";
+//import PropTypes from "prop-types";
 
-function Contact(props) {
+function Event(props) {
     return (
-        <div className="contact">
+        <div className="event">
             <span>{props.name}</span>
         </div>
     );
 }
 
 // Typüberprüfung
-//Contact.propTypes = {
+//Event.propTypes = {
 //    name: PropTypes.string.isRequired
 //};
 
-export default Contact;
+export default Event;
