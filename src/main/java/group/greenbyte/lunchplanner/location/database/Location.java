@@ -79,15 +79,7 @@ public class Location {
         isPublic = aPublic;
     }
 
-    public Set<Event> getEvents() {
-        return events;
-    }
-
     public void setEvents(Set<Event> events) {
         this.events = events;
-    }
-
-    public Set<LocationAdmin> getLocationAdmins() {
-        return locationAdmins;
     }
 }

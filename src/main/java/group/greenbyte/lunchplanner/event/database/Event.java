@@ -97,10 +97,6 @@ public class Event {
         this.location = location;
     }
 
-    public Set<EventInvitation> getUsersInvited() {
-        return usersInvited;
-    }
-
     public void setEventId(Integer eventId) {
         this.eventId = eventId;
     }
