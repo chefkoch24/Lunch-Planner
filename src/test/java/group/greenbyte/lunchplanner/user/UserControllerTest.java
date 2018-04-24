@@ -33,6 +33,12 @@ import static group.greenbyte.lunchplanner.location.Utils.createLocation;
 import static group.greenbyte.lunchplanner.user.Utils.createUserIfNotExists;
 import static org.junit.Assert.*;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.response.SecurityMockMvcResultMatchers.authenticated;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
@@ -54,13 +60,13 @@ public class UserControllerTest {
     @Autowired
     private LocationLogic locationLogic;
 
-    private String userName;
+    private final String userName = "banane";
     private int locationId;
     private int eventId;
 
     @Before
     public void setUp() throws Exception {
-        userName = createUserIfNotExists(userLogic, "dummy");
+        createUserIfNotExists(userLogic, userName);
         locationId = createLocation(locationLogic, userName, "Test location", "test description");
         eventId = createEvent(eventLogic, userName, locationId);
 
@@ -73,44 +79,42 @@ public class UserControllerTest {
     public void test1CreateUserValidParam() throws Exception{
         String userName = createString(50);
         String mail = "teeeaefst@yuyhinoal.dalk";
-        String password = createString(80);
-
-        UserJson userJson = new UserJson(userName, password, mail);
-
-        String json = getJsonFromObject(userJson);
+        String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
+                post("/user")
+                        .param("username", userName)
+                        .param("password", password)
+                        .param("email", mail))
+                .andExpect(status().isCreated());
     }
 
     @Test
     public void test2CreateUserEmptyUsername() throws Exception{
         String userName = "";
         String mail = "teasdfast@yuyhinoal.dalk";
-        String password = createString(80);
-
-        UserJson userJson = new UserJson(userName, password, mail);
-        String json = getJsonFromObject(userJson);
+        String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                post("/user")
+                        .param("username", userName)
+                        .param("password", password)
+                        .param("email", mail))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void test3CreateUserTooLongUserName() throws Exception{
         String userName = createString(51);
         String mail = "teasdfst@yuyhinoal.dalk";
-        String password = createString(80);
-
-        UserJson userJson = new UserJson(userName, password, mail);
-
-        String json = getJsonFromObject(userJson);
+        String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                post("/user")
+                        .param("username", userName)
+                        .param("password", password)
+                        .param("email", mail))
+                .andExpect(status().isBadRequest());
     }
   
     @Test
@@ -119,73 +123,54 @@ public class UserControllerTest {
         String mail = "tesdaft@yuyhinoal.dalk";
         String password = "";
 
-        UserJson userJson = new UserJson(userName, password, mail);
-
-        String json = getJsonFromObject(userJson);
-
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-    }
-
-    @Test
-    public void test5CreateUserTooLongPassword() throws Exception{
-        String userName = createString(50);
-        String mail = "teaaefst@yuyhinoal.dalk";
-        String password = createString(81);
-
-        UserJson userJson = new UserJson(userName, password, mail);
-
-        String json = getJsonFromObject(userJson);
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                post("/user")
+                        .param("username", userName)
+                        .param("password", password)
+                        .param("email", mail))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void test6CreateUserMailEmpty() throws Exception{
         String userName = createString(50);
         String mail = "";
-        String password = createString(80);
-
-        UserJson userJson = new UserJson(userName, password, mail);
-
-        String json = getJsonFromObject(userJson);
+        String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                post("/user")
+                        .param("username", userName)
+                        .param("password", password)
+                        .param("email", mail))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void test7CreateUserTooLongEmail() throws Exception{
         String userName = createString(50);
         String mail = createString(50) + "@yuyhinoal.dalk";
-        String password = createString(80);
-
-        UserJson userJson = new UserJson(userName, password, mail);
-
-        String json = getJsonFromObject(userJson);
+        String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                post("/user")
+                        .param("username", userName)
+                        .param("password", password)
+                        .param("email", mail))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void test8CreateUserInvalidMail() throws Exception{
         String userName = createString(50);
         String mail = "ungueltige-mail.de";
-        String password = createString(80);
-
-        UserJson userJson = new UserJson(userName, password, mail);
-
-        String json = getJsonFromObject(userJson);
+        String password = createString(200);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.post("/user").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                post("/user")
+                        .param("username", userName)
+                        .param("password", password)
+                        .param("email", mail))
+                .andExpect(status().isBadRequest());
     }
 
     // ------------------------- SEND INVITATION ------------------------------
@@ -202,6 +187,96 @@ public class UserControllerTest {
 //                .andExpect(MockMvcResultMatchers.jsonPath("$.toInviteUsername", is(userName)));
 //    }
 
+
+    // ------------------------- LOGIN USER ------------------------------
+
+    //TODO test login
+//    @Test
+//    public void test1Login() throws Exception {
+//        mockMvc
+//                .perform(post("/login").param("username", userName).param("password", "1234"))
+//                .andExpect(status().isOk())
+//                .andExpect(authenticated().withUsername(userName));
+//    }
+
+//    @Test
+//    public void test1LoginUser() throws Exception{
+//        String userName = "A";
+//        String password = "A";
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/login")
+//                        .param("username", userName)
+//                        .param("password", password))
+//                .andExpect(MockMvcResultMatchers.status().isAccepted());
+//    }
+//
+//    @Test
+//    public void test2LoginUserMaxLength() throws Exception{
+//        String userName = createString(50);
+//        String password = createString(80);
+//
+//        UserJson userJson = new UserJson(userName, password);
+//
+//        String json = getJsonFromObject(userJson);
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+//                .andExpect(MockMvcResultMatchers.status().isAccepted());
+//    }
+//
+//    @Test
+//    public void test3LoginUserUserNameTooLong() throws Exception{
+//        String userName = createString(51);
+//        String password = createString(80);
+//
+//        UserJson userJson = new UserJson(userName, password);
+//
+//        String json = getJsonFromObject(userJson);
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
+//
+//    @Test
+//    public void test4LoginUserNoUserName() throws Exception{
+//        String userName = "";
+//        String password = createString(80);
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/login")
+//                        .requestAttr("username", userName).requestAttr("password", password))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
+//
+//    @Test
+//    public void test5LoginUserPasswordTooLong() throws Exception{
+//        String userName = createString(50);
+//        String password = createString(81);
+//
+//        UserJson userJson = new UserJson(userName, password);
+//
+//        String json = getJsonFromObject(userJson);
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
+//
+//    @Test
+//    public void test6LoginUserNoPassword() throws Exception{
+//        String userName = createString(50);
+//        String password = "";
+//
+//        UserJson userJson = new UserJson(userName, password);
+//
+//        String json = getJsonFromObject(userJson);
+//
+//        mockMvc.perform(
+//                MockMvcRequestBuilders.post("/user/loginUser").contentType(MediaType.APPLICATION_JSON_VALUE).content(json))
+//                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+//    }
 
 
 }

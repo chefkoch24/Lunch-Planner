@@ -90,15 +90,4 @@ public class Location {
     public Set<LocationAdmin> getLocationAdmins() {
         return locationAdmins;
     }
-
-    public void setLocationAdmins(Set<LocationAdmin> locationAdmins) {
-        this.locationAdmins = locationAdmins;
-    }
-
-    public void addLocationAdmin(LocationAdmin locationAdmin) {
-        if(locationAdmins == null)
-            locationAdmins = new HashSet<>();
-
-        locationAdmins.add(locationAdmin);
-    }
 }

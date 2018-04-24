@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -50,13 +51,13 @@ public class LocationControllerTest {
     @Autowired
     private UserLogic userLogic;
 
-    private String userName;
+    private final String userName = "enafndj";
     private int locationId;
     private int eventId;
 
     @Before
     public void setUp() throws Exception {
-        userName = createUserIfNotExists(userLogic, "dummy");
+        createUserIfNotExists(userLogic, userName);
         locationId = createLocation(locationLogic, userName, "Test location", "test description");
         eventId = createEvent(eventLogic, userName, locationId);
 
@@ -66,6 +67,7 @@ public class LocationControllerTest {
     // ------------------ CREATE LOCATION ------------------------
 
     @Test
+    @WithMockUser(username = userName)
     public void test1CreateLocationWithNoDescription() throws Exception {
         double xCoordinate = 1.0;
         double yCoordinate = 1.0;
@@ -91,6 +93,7 @@ public class LocationControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2CreateLocationWithNormalDescriptionAndMaxLocationName() throws Exception {
         double xCoordinate = 1.0;
         double yCoordinate = 1.0;
@@ -116,6 +119,7 @@ public class LocationControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test3CreateLocationWithMaxDescriptionAndMaxLocationName() throws Exception {
         double xCoordinate = 1.0;
         double yCoordinate = 1.0;
@@ -141,6 +145,7 @@ public class LocationControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test4CreateLocationWithNoLocationName() throws Exception {
         double xCoordinate = 1.0;
         double yCoordinate = 1.0;
@@ -155,6 +160,7 @@ public class LocationControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test5CreateLocationNameTooLong() throws Exception {
         double xCoordinate = 1.0;
         double yCoordinate = 1.0;
@@ -170,6 +176,7 @@ public class LocationControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test6CreateLocationDescriptionTooLong() throws Exception {
         double xCoordinate = 1.0;
         double yCoordinate = 1.0;
@@ -185,6 +192,7 @@ public class LocationControllerTest {
 
     // --------------------- GET LOCATION -------------------
     @Test
+    @WithMockUser(username = userName)
     public void test1GetLocation() throws Exception {
         String locationName = createString(50);
         String locationDescription = createString(1000);
@@ -199,6 +207,7 @@ public class LocationControllerTest {
     }
 
     @Test
+    @WithMockUser(username = userName)
     public void test2GetLocationNotFound() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/location/" + locationId + 100))

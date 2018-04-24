@@ -106,7 +106,7 @@ public class TeamLogic {
 
             teamdao.addUserToTeam(teamId, userToInvite);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
         userLogic.sendInvitation(username, userToInvite);

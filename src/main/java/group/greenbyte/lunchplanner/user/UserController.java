@@ -1,15 +1,27 @@
 package group.greenbyte.lunchplanner.user;
 
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.session.security.web.authentication.SpringSessionRememberMeServices;
+import org.springframework.session.Session.*;
+import org.springframework.security.core.Authentication.*;
+
 
 @RestController
+
 @RequestMapping("/user")
 public class UserController {
+
+
+//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    private SpringSessionRememberMeServices a;
 
     private UserLogic userLogic;
 
@@ -20,10 +32,13 @@ public class UserController {
      * @return error message or nothing
      */
     @RequestMapping(value = "", method = RequestMethod.POST)
-    public String createUser(@RequestBody UserJson user, HttpServletResponse response) {
+    public String createUser(@RequestParam("username") String username,
+                             @RequestParam("password") String password,
+                             @RequestParam("email") String email,
+                             HttpServletResponse response) {
 
         try {
-            userLogic.createUser(user.getUserName(), user.getPassword(), user.getMail());
+            userLogic.createUser(username, password, email);
             response.setStatus(HttpServletResponse.SC_CREATED);
         } catch (HttpRequestException e) {
             response.setStatus(e.getStatusCode());

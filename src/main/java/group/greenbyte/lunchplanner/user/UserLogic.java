@@ -5,10 +5,16 @@ import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
 import group.greenbyte.lunchplanner.user.database.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
+import org.springframework.security.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.regex.Pattern;
+
+import static group.greenbyte.lunchplanner.user.SecurityHelper.validatePassword;
 
 @Service
 public class UserLogic {
@@ -31,20 +37,25 @@ public class UserLogic {
         if(userName == null || userName.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "user name is empty");
 
+        if(userName.length() > User.MAX_USERNAME_LENGTH)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "user name is too long");
+
         if(password == null || password.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "password is empty");
 
         if(mail == null || mail.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is empty");
 
+        if(mail.length() > User.MAX_MAIL_LENGTH)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is too long");
+
         if(!REGEX_MAIL.matcher(mail).matches())
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "mail is not valid");
 
         try {
-            //ToDo hash password
-            userDao.createUser(userName, password, mail);
-        } catch (DatabaseException e) {
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            userDao.createUser(userName, SecurityHelper.hashPassword(password), mail);
+        } catch (DatabaseException | NoSuchAlgorithmException | InvalidKeySpecException e) {
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -52,7 +63,7 @@ public class UserLogic {
         try {
             return userDao.getUser(userName);
         } catch (DatabaseException e) {
-            throw new HttpRequestException(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -65,6 +76,7 @@ public class UserLogic {
     public void sendInvitation(String userName, String toInviteUserName) {
         //ToDO send notfication to user
     }
+
 
     @Autowired
     public void setUserDao(UserDao userDao) {

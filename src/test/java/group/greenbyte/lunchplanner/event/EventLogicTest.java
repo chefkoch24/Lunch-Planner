@@ -484,7 +484,7 @@ public class EventLogicTest {
     public void test1SendInvitation() throws Exception {
         String userToInvite = createUserIfNotExists(userLogic, createString(50));
 
-        eventLogic.inviteFriend(userName, userToInvite, 1);
+        eventLogic.inviteFriend(userName, userToInvite, eventId);
 
     }
 
@@ -494,7 +494,7 @@ public class EventLogicTest {
         String myUsername = createString(0);
         String userToInvite = createUserIfNotExists(userLogic, createString(50));
 
-        eventLogic.inviteFriend(myUsername, userToInvite, 1);
+        eventLogic.inviteFriend(myUsername, userToInvite, eventId);
 
     }
 
@@ -504,14 +504,14 @@ public class EventLogicTest {
         String myUsername = createString(51);
         String userToInvite = createUserIfNotExists(userLogic, createString(50));
 
-        eventLogic.inviteFriend(myUsername, userToInvite, 1);
+        eventLogic.inviteFriend(myUsername, userToInvite, eventId);
     }
 
     @Test (expected = HttpRequestException.class)
     public void test4SendInvitationEmptyToInvitedUsername() throws Exception {
         String userToInvite = createString(0);
 
-        eventLogic.inviteFriend(userName, userToInvite, 1);
+        eventLogic.inviteFriend(userName, userToInvite, eventId);
 
     }
 
@@ -520,7 +520,7 @@ public class EventLogicTest {
 
         String userToInvite = createString(51);
 
-        eventLogic.inviteFriend(userName, userToInvite, 1);
+        eventLogic.inviteFriend(userName, userToInvite, eventId);
 
     }
 

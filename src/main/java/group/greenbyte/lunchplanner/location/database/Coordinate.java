@@ -12,8 +12,6 @@ public class Coordinate {
     @Column
     private double yCoordinate;
 
-    public Coordinate() {}
-
     public Coordinate(double x, double y) {
         xCoordinate = x;
         yCoordinate = y;
@@ -23,15 +21,7 @@ public class Coordinate {
         return xCoordinate;
     }
 
-    public void setxCoordinate(double xCoordinate) {
-        this.xCoordinate = xCoordinate;
-    }
-
     public double getyCoordinate() {
         return yCoordinate;
-    }
-
-    public void setyCoordinate(double yCoordinate) {
-        this.yCoordinate = yCoordinate;
     }
 }

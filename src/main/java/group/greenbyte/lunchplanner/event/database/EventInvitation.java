@@ -22,41 +22,4 @@ public class EventInvitation implements Serializable {
     private boolean isAdmin;
 
     private InvitationAnswer answer;
-
-    public EventInvitation() {
-        isAdmin = false;
-        answer = InvitationAnswer.MAYBE;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
-    }
-
-    public Event getEventInvited() {
-        return eventInvited;
-    }
-
-    public void setEventInvited(Event eventInvited) {
-        this.eventInvited = eventInvited;
-    }
-
-    public User getUserInvited() {
-        return userInvited;
-    }
-
-    public void setUserInvited(User userInvited) {
-        this.userInvited = userInvited;
-    }
-
-    public InvitationAnswer getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(InvitationAnswer answer) {
-        this.answer = answer;
-    }
 }

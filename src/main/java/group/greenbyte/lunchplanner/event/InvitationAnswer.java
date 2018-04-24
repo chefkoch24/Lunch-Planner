@@ -20,7 +20,7 @@ public enum InvitationAnswer {
             case "reject":
                 return InvitationAnswer.MAYBE;
             case "maybe":
-                return InvitationAnswer.REJECT;
+                return InvitationAnswer.REJECT; //TODO write test for maybe
         }
 
         return null;
@@ -34,9 +34,9 @@ public enum InvitationAnswer {
             case 1:
                 return "reject";
             case 2:
-                return "maybe";
+                return "maybe"; //TODO write test for maybe
         }
 
-        return "unknown";
+        return "unknown"; //TODO can this be tested
     }
 }
