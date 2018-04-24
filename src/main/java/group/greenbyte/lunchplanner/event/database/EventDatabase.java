@@ -46,10 +46,6 @@ public class EventDatabase {
         this.endDate = endDate;
     }
 
-    public void setPublic(boolean aPublic) {
-        isPublic = aPublic;
-    }
-
     public void setEventName(String eventName) {
         this.eventName = eventName;
     }

@@ -93,7 +93,7 @@ public class EventLogic {
             return eventDao.insertEvent(userName, eventName, eventDescription, locationId, timeStart, timeEnd)
                     .getEventId();
         }catch(DatabaseException e) {
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -109,6 +109,9 @@ public class EventLogic {
         if(name == null || name.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username can not be empty");
 
+        if(name.length() > Event.MAX_EVENTNAME_LENGTH)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Too long name");
+
         try {
             Event event = eventDao.getEvent(eventId);
             if(event == null)
@@ -121,7 +124,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -134,6 +137,9 @@ public class EventLogic {
      */
     void updateEventDescription(String username, int eventId, String description)  throws HttpRequestException {
         try {
+            if(description.length() > Event.MAX_DESCRITION_LENGTH)
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Too long description");
+
             Event event = eventDao.getEvent(eventId);
             if(event == null)
                 throw new HttpRequestException(HttpStatus.NOT_FOUND.value(), "Event with eventId does not exist: " + eventId);
@@ -145,7 +151,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -173,7 +179,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -204,7 +210,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
     /**
@@ -231,7 +237,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -265,13 +271,13 @@ public class EventLogic {
             if(event == null)
                 return null;
             else {
-                if(!hasPrivileges(eventId, userName))
+                if(!hasPrivileges(eventId, userName)) //TODO write test for next line
                     throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have rights to access this event");
 
                 return event;
             }
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -294,12 +300,12 @@ public class EventLogic {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username of invited user is not valid, maximun length" + Event.MAX_USERNAME_LENGHT + ", minimum length 1");
 
         try{
-            if(!hasAdminPrivileges(eventId, username))
+            if(!hasAdminPrivileges(eventId, username)) //TODO write test for next line
                 throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this event");
 
             eventDao.putUserInviteToEvent(userToInvite, eventId);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
         userLogic.sendInvitation(username, userToInvite);
@@ -326,7 +332,7 @@ public class EventLogic {
 
             eventDao.replyInvitation(userName, eventId, answer);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -359,7 +365,7 @@ public class EventLogic {
             return new ArrayList<>(searchResults);
 
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 

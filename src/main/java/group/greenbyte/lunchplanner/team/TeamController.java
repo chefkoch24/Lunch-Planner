@@ -1,6 +1,7 @@
 package group.greenbyte.lunchplanner.team;
 
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
+import group.greenbyte.lunchplanner.security.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +25,7 @@ public class TeamController {
     public String createTeam(@RequestBody TeamJson teamjson, HttpServletResponse response) {
         try {
 
-            int teamId = teamlogic.createTeamWithParent("dummy", teamjson.getParent(), teamjson.getTeamName(), teamjson.getDescription());
+            int teamId = teamlogic.createTeamWithParent(SessionManager.getUserName(), teamjson.getParent(), teamjson.getTeamName(), teamjson.getDescription());
 
             response.setStatus(HttpServletResponse.SC_CREATED);
             return String.valueOf(teamId);
@@ -48,7 +49,7 @@ public class TeamController {
     @ResponseBody
     public String inviteTeamMember(@PathVariable("userToInvite") String userToInvite, @PathVariable ("teamId") int teamId, HttpServletResponse response){
         try {
-            teamlogic.inviteTeamMember("dummy", userToInvite, teamId);
+            teamlogic.inviteTeamMember(SessionManager.getUserName(), userToInvite, teamId);
             response.setStatus(HttpServletResponse.SC_CREATED);
         } catch (HttpRequestException e) {
             response.setStatus(e.getStatusCode());

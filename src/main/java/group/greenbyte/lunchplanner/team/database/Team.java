@@ -67,21 +67,6 @@ public class Team {
         this.teamName = teamName;
     }
 
-    public Set<TeamMember> getTeamsMember() {
-        return teamsMember;
-    }
-
-    public void setTeamsMember(Set<TeamMember> teamsMember) {
-        this.teamsMember = teamsMember;
-    }
-
-    public void addTeamsMember(TeamMember teamMember) {
-        if (teamsMember == null)
-            teamsMember = new HashSet<>();
-
-        teamsMember.add(teamMember);
-    }
-
     public String getDescription() {
         return description;
     }
@@ -96,21 +81,5 @@ public class Team {
 
     public void setParentTeam(Team parentTeam) {
         this.parentTeam = parentTeam;
-    }
-
-    public Set<Team> getChildTeams() {
-        return childTeams;
-    }
-
-    public void setChildTeams(Set<Team> childTeams) {
-        this.childTeams = childTeams;
-    }
-
-    public void addUsersInvited(TeamInvitation teamInvitation) {
-        if (usersInvited == null) {
-            usersInvited = new HashSet<>();
-        }
-
-        usersInvited.add(teamInvitation);
     }
 }
