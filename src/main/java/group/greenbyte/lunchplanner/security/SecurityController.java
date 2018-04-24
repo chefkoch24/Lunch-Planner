@@ -19,4 +19,6 @@ public class SecurityController {
     public String registration() {
         return "registration";
     }
+
+
 }

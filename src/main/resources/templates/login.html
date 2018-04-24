@@ -4,6 +4,7 @@
 </head>
 <body>
 <h3> Spring 4 Security + Thymeleaf Integration Example </h3>
+<p>first test for lunchplanner</p>
 <p th:if="${param.error}">
     Bad Credentials
 </p>
@@ -12,5 +13,13 @@
     Password: <input type="password" name="password"/> <br/><br/>
     <input type="submit" value="Login"/>
 </form>
+
+<button class="btn btn-primary btn-lg disabled" role="button" aria-disabled="true">
+    <a href="/registration">Registry</a>
+</button>
+
+
+
+
 </body>
 </html>
