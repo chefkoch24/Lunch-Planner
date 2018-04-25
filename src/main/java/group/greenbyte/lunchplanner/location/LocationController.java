@@ -1,6 +1,8 @@
 package group.greenbyte.lunchplanner.location;
 
 import group.greenbyte.lunchplanner.exceptions.HttpRequestException;
+import group.greenbyte.lunchplanner.location.database.Location;
+import group.greenbyte.lunchplanner.security.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ public class LocationController {
     public String createLocation(@RequestBody LocationJson location, HttpServletResponse response) {
 
         try {
-            int locationId = locationLogic.createLocation("dummy",
+            int locationId = locationLogic.createLocation(SessionManager.getUserName(),
                     location.getLocationName(),location.getxCoordinate(),location.getyCoordinate(),location.getDescription());
 
             response.setStatus(HttpServletResponse.SC_CREATED);
@@ -28,7 +30,26 @@ public class LocationController {
             response.setStatus(e.getStatusCode());
             return e.getErrorMessage();
         }
+    }
 
+    @RequestMapping(value = "/{locationId}", method = RequestMethod.GET,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Location getLocation(@PathVariable int locationId, HttpServletResponse response) {
+
+        try {
+            Location location = locationLogic.getLocation(SessionManager.getUserName(), locationId);
+
+            if(location == null)
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            else
+                return location;
+
+        }catch(HttpRequestException e){
+            response.setStatus(e.getStatusCode());
+        }
+
+        return null;
     }
 
     @Autowired

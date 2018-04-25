@@ -3,44 +3,31 @@ package group.greenbyte.lunchplanner.team.database;
 import group.greenbyte.lunchplanner.event.database.EventTeamVisible;
 
 import javax.persistence.*;
-import javax.print.DocFlavor;
-import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-public class Team {
+public class TeamDatabase {
 
-    public static final int MAX_TEAMNAME_LENGHT = 50;
-    public static final int MAX_DESCRIPTION_LENGHT = 1000;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int teamId;
 
-    @Column
     private boolean isPublic;
 
-    @Column(length = MAX_TEAMNAME_LENGHT, nullable = false)
     private String teamName;
 
-    @Column(length = MAX_DESCRIPTION_LENGHT)
     private String description;
 
-    @OneToMany(mappedBy = "user")
-    private Set<TeamMember> teamsMember;
+    private int parentTeam = -1;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "parentTeam")
-    private Team parentTeam;
+    /**
+     * @return team with all data from the entity and no relations
+     */
+    public Team getTeam() {
+        Team team = new Team();
+        team.setTeamName(teamName);
+        team.setDescription(description);
+        team.setPublic(isPublic);
+        team.setTeamId(teamId);
 
-    @OneToMany(mappedBy = "parentTeam")
-    private Set<Team> childTeams = new HashSet<>();
-
-    @OneToMany(mappedBy = "userInvited")
-    private Set<TeamInvitation> usersInvited = new HashSet<>();
-
-    public Team() {
-        isPublic = false;
+        return team;
     }
 
     public int getTeamId() {
@@ -75,11 +62,12 @@ public class Team {
         this.description = description;
     }
 
-    public Team getParentTeam() {
+    public int getParentTeam() {
         return parentTeam;
     }
 
-    public void setParentTeam(Team parentTeam) {
+    public void setParentTeam(int parentTeam) {
         this.parentTeam = parentTeam;
     }
+
 }

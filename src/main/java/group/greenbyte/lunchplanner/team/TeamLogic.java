@@ -25,9 +25,39 @@ public class TeamLogic {
      * @throws HttpRequestException when teamName, userName, description not valid
      * or an Database error happens
      */
+    int createTeamWithParent(String userName, int parent, String teamName, String description) throws HttpRequestException {
+        checkParams(userName, teamName, description);
 
-    int createTeam(String userName, int parent, String teamName, String description) throws HttpRequestException {
+        try {
+            if(!hasViewPrivileges(userName, parent))
+                throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "No Privileges to acces parent team: " + parent);
 
+            return teamdao.insertTeamWithParent(teamName, description, userName, parent);
+        } catch(DatabaseException d){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
+        }
+    }
+
+    /**
+     *
+     * @param userName userName that is logged in
+     * @param teamName name of the new team
+     * @param description description of the new location
+     * @return the id of the new team
+     * @throws HttpRequestException when teamName, userName, description not valid
+     * or an Database error happens
+     */
+    int createTeamWithoutParent(String userName, String teamName, String description) throws HttpRequestException {
+        checkParams(userName, teamName, description);
+
+        try {
+            return teamdao.insertTeam(teamName, description, userName);
+        } catch(DatabaseException d){
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
+        }
+    }
+
+    private void checkParams(String userName, String teamName, String description) throws HttpRequestException {
         if(userName.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username is empty");
 
@@ -42,33 +72,15 @@ public class TeamLogic {
 
         if(description.length() > Team.MAX_DESCRIPTION_LENGHT)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Description too long");
-
-        /*if(hasRootPrivileges(userName, teamdao.getTeam(parent)))
-            throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "No Privileges");*/
-
-        /*if(canCreateTeam(teamdao.getTeam(parent), teamName))
-            throw new HttpRequestException(HttpStatus.CONFLICT.value(), "Team already exists");*/
-
-        try {
-            return teamdao.insertTeam(teamName, description, userName, parent);
-        } catch(DatabaseException d){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), d.getMessage());
-        }
-
     }
-    //TODO check privileges
 
-    /*private boolean hasViewPrivileges(String userName, Team team){
-        return false;
-    }*/
+    private boolean hasViewPrivileges(String userName, int teamId) throws DatabaseException {
+        return teamdao.hasViewPrivileges(teamId, userName);
+    }
 
-    /*private boolean hasRootPrivileges(String userName, Team team){
-        return false;
-    }*/
-
-    /*private canCreateTeam(Team parent, String teamName) {
-        return false;
-    }*/
+    private boolean hasRootPrivileges(String userName, int teamId) throws DatabaseException {
+        return teamdao.hasAdminPrivileges(teamId, userName);
+    }
 
     /**
      * Invite user to a team
@@ -89,22 +101,19 @@ public class TeamLogic {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username of invited user is not valid, maximun length" + User.MAX_USERNAME_LENGTH + ", minimum length 1");
 
         try{
-            teamdao.putUserTeamMember(userToInvite, teamId);
+            if(!hasRootPrivileges(username, teamId))
+                throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this team");
+
+            teamdao.addUserToTeam(teamId, userToInvite);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
         userLogic.sendInvitation(username, userToInvite);
     }
 
     private boolean isValidName(String name){
-        if(name.length() <= User.MAX_USERNAME_LENGTH && name.length() > 0){
-            System.out.println("isValid");
-            return true;
-        }
-
-        else
-            return false;
+        return name.length() <= User.MAX_USERNAME_LENGTH && name.length() > 0;
     }
 
 

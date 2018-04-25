@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @Controller
 public class HomeController {
-
     @CrossOrigin
     @RequestMapping(value = "/home" ,method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -19,5 +18,4 @@ public class HomeController {
     public String index(HttpServletResponse response) {
         return "{name : lennane Graham}";
     }
-
 }

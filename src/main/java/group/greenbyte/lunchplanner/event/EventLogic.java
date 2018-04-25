@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class EventLogic {
+
 
     private EventDao eventDao;
     private LocationDao locationDao;
@@ -25,14 +25,23 @@ public class EventLogic {
     /**
      * Checks if a user has privileges to change the event object
      *
-     * @param event to check
+     * @param eventId id of the event to check
      * @param userName who wants to change
      * @return true if the user has permission, false if not
      */
-    private boolean hasAdminPrivileges(Event event, String userName) {
-        //TODO hasPrivileges
+    private boolean hasAdminPrivileges(int eventId, String userName) throws DatabaseException {
+        return eventDao.userHasAdminPrivileges(userName, eventId);
+    }
 
-        return true;
+    /**
+     * Checks if a user has privileges to view the event object
+     *
+     * @param eventId id of the event to check
+     * @param userName who wants to change
+     * @return true if the user has permission, false if not
+     */
+    private boolean hasPrivileges(int eventId, String userName) throws DatabaseException {
+        return eventDao.userHasPrivileges(userName, eventId);
     }
 
     /**
@@ -80,13 +89,11 @@ public class EventLogic {
         if(timeEnd.before(timeStart) || timeEnd.equals(timeStart))
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "End time must be after start time");
 
-        //ToDo check if user exists
-
         try {
             return eventDao.insertEvent(userName, eventName, eventDescription, locationId, timeStart, timeEnd)
                     .getEventId();
         }catch(DatabaseException e) {
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -99,22 +106,25 @@ public class EventLogic {
      *                                  or an Database error happens
      */
     void updateEventName(String username, int eventId, String name)  throws HttpRequestException {
-        //ToDo check if user exists
-
         if(name == null || name.length() == 0)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username can not be empty");
 
+        if(name.length() > Event.MAX_EVENTNAME_LENGTH)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Too long name");
+
         try {
             Event event = eventDao.getEvent(eventId);
-            //TODO write test for permission
-            if(event == null || !hasAdminPrivileges(event, username))
-                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+            if(event == null)
+                throw new HttpRequestException(HttpStatus.NOT_FOUND.value(), "Event with eventId does not exist: " + eventId);
+
+            if(!hasAdminPrivileges(eventId, username))
+                throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this event");
 
             Event updatedEvent = eventDao.updateEventName(eventId,name);
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -126,19 +136,22 @@ public class EventLogic {
      *                                  or an Database error happens
      */
     void updateEventDescription(String username, int eventId, String description)  throws HttpRequestException {
-        //ToDo check if user exists
-
         try {
+            if(description.length() > Event.MAX_DESCRITION_LENGTH)
+                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Too long description");
+
             Event event = eventDao.getEvent(eventId);
-            //TODO write test for permission
-            if(event == null || !hasAdminPrivileges(event, username))
-                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+            if(event == null)
+                throw new HttpRequestException(HttpStatus.NOT_FOUND.value(), "Event with eventId does not exist: " + eventId);
+
+            if(!hasAdminPrivileges(eventId, username))
+                throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this event");
 
             Event updatedEvent = eventDao.updateEventDescription(eventId, description);
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -149,24 +162,24 @@ public class EventLogic {
      * @exception HttpRequestException  when location and timeStart not valid or eventName has no value
      *                                  or an Database error happens
      */
-    void updateEventLoction(String username, int eventId, int locationId)  throws HttpRequestException {
-        //ToDo check if user exists
-
+    void updateEventLocation(String username, int eventId, int locationId)  throws HttpRequestException {
         try {
             Location location = locationDao.getLocation(locationId);
             if(location == null)
                 throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Location with locationId does not exist: " + locationId);
 
-            //ToDo write test for permission
             Event event = eventDao.getEvent(eventId);
-            if(event == null || !hasAdminPrivileges(event, username))
-                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+            if(event == null)
+                throw new HttpRequestException(HttpStatus.NOT_FOUND.value(), "Event with eventId does not exist: " + eventId);
+
+            if(!hasAdminPrivileges(eventId, username))
+                throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this event");
 
             Event updatedEvent = eventDao.updateEventLocation(eventId, locationId);
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -179,16 +192,16 @@ public class EventLogic {
      *                                  or an Database error happens
      */
     void updateEventTimeStart(String username, int eventId, Date timeStart) throws HttpRequestException {
-        //ToDo check if user exists
-
         if(timeStart.before(new Date()))
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Time start is before today");
 
         try {
-            //ToDo: Write test for permission
             Event event = eventDao.getEvent(eventId);
-            if(event == null || !hasAdminPrivileges(event, username))
-                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+            if(event == null)
+                throw new HttpRequestException(HttpStatus.NOT_FOUND.value(), "Event with eventId does not exist: " + eventId);
+
+            if(!hasAdminPrivileges(eventId, username))
+                throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this event");
 
             if(!timeStart.before(event.getEndDate()))
                 throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Time Start is after time end");
@@ -197,7 +210,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
     /**
@@ -209,13 +222,13 @@ public class EventLogic {
      *                                  or an Database error happens
      */
     void updateEventTimeEnd(String username, int eventId, Date timeEnd)  throws HttpRequestException {
-        //ToDo: check if user exists
-
         try {
-            //ToDo: write test for permission
             Event event = eventDao.getEvent(eventId);
-            if(event == null || !hasAdminPrivileges(event, username))
-                throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Event with eventId does not exist: " + eventId);
+            if(event == null)
+                throw new HttpRequestException(HttpStatus.NOT_FOUND.value(), "Event with eventId does not exist: " + eventId);
+
+            if(!hasAdminPrivileges(eventId, username))
+                throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this event");
 
             if(timeEnd.before(event.getStartDate()))
                 throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Time end is before time start");
@@ -224,7 +237,7 @@ public class EventLogic {
 
             eventChanged(updatedEvent);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -235,18 +248,12 @@ public class EventLogic {
      *
      */
     public List<Event> getAllEvents(String username) throws HttpRequestException{
-        //ToDo check if user exists
-
         if(username.length() > User.MAX_USERNAME_LENGTH)
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username is to long, maximun length" + Event.MAX_USERNAME_LENGHT);
         if(username.length() == 0 )
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username is empty");
 
-        try{
-            return eventDao.search(username, "");
-        }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        }
+        return this.searchEventsForUser(username, "");
     }
 
     /**
@@ -256,28 +263,21 @@ public class EventLogic {
      * @return Event which matched with the given id or null
      */
     public Event getEvent(String userName, int eventId)throws HttpRequestException{
-        //ToDo check if user exists and has permission
-
         try{
-            return eventDao.getEvent(eventId);
-        }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-        }
-    }
 
-    //only for test purpose
-    /**
-     * only for test purpose!
-     *
-     * @param eventId  id of the event
-     * @return Event which matched with the given id or null
-     */
-    public Event getEvent(int eventId)throws HttpRequestException{
 
-        try{
-            return eventDao.getEvent(eventId);
+            Event event = eventDao.getEvent(eventId);
+
+            if(event == null)
+                return null;
+            else {
+                if(!hasPrivileges(eventId, userName)) //TODO write test for next line
+                    throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have rights to access this event");
+
+                return event;
+            }
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
     }
 
@@ -300,12 +300,40 @@ public class EventLogic {
             throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username of invited user is not valid, maximun length" + Event.MAX_USERNAME_LENGHT + ", minimum length 1");
 
         try{
+            if(!hasAdminPrivileges(eventId, username)) //TODO write test for next line
+                throw new HttpRequestException(HttpStatus.FORBIDDEN.value(), "You dont have write access to this event");
+
             eventDao.putUserInviteToEvent(userToInvite, eventId);
         }catch(DatabaseException e){
-            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
         }
 
         userLogic.sendInvitation(username, userToInvite);
+    }
+
+    /**
+     * Invitation reply
+     *
+     * @param userName user that replies
+     * @param eventId id of the event
+     * @param answer answer of the user
+     */
+    public void reply(String userName, int eventId, InvitationAnswer answer) throws HttpRequestException {
+        if(!isValidName(userName))
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username is not valid, maximun length" + Event.MAX_USERNAME_LENGHT + ", minimum length 1");
+        if(answer == null)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Invalid answer");
+
+        try {
+            if(eventDao.getEvent(eventId) == null)
+                throw new HttpRequestException(HttpStatus.NOT_FOUND.value(), "Event with event-id: " + eventId + ", was not found");
+
+            //TODO privilege check
+
+            eventDao.replyInvitation(userName, eventId, answer);
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
     }
 
     private boolean isValidName(String name){
@@ -316,6 +344,29 @@ public class EventLogic {
 
         else
             return false;
+    }
+
+    public List<Event> searchEventsForUser(String userName, String searchword) throws HttpRequestException{
+
+        if(searchword == null || searchword.length() > Event.MAX_SEARCHWORD_LENGTH)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Searchword is to long, empty or null ");
+        if(userName == null || userName.length()== 0 || userName.length() > Event.MAX_USERNAME_LENGHT)
+            throw new HttpRequestException(HttpStatus.BAD_REQUEST.value(), "Username is to long, empty or null ");
+
+        try{
+            Set<Event> searchResults = new HashSet<>();
+            List<Event> temp = eventDao.findPublicEvents(searchword);
+
+            searchResults.addAll(eventDao.findPublicEvents(searchword));
+            searchResults.addAll(eventDao.findEventsUserInvited(userName, searchword));
+
+            //Get teams and get all events for this teams
+
+            return new ArrayList<>(searchResults);
+
+        }catch(DatabaseException e){
+            throw new HttpRequestException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+        }
     }
 
 
